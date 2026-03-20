@@ -1,0 +1,166 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  height: 100vh;
+  background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+  color: white;
+}
+
+/* MAIN LAYOUT */
+.Main {
+  display: flex;
+  height: 100vh;
+}
+
+/* LEFT SIDE (bigger) */
+.Left {
+  flex: 2; /* bigger */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* RIGHT SIDE */
+.Right {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* SCHEDULE BOX */
+.Schedule_Box {
+  width: 80%;
+  height: 70%;
+  background: rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  overflow-y: scroll;
+  
+  
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+.Schedule_Box::-webkit-scrollbar{
+    display: block;
+}
+
+/* TABLE */
+.schedule {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+}
+
+.schedule td {
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* FORM BOX */
+.Schedule_Info {
+  width: 80%;
+  background: rgba(0,0,0,0.5);
+  padding: 30px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  backdrop-filter: blur(10px);
+}
+.Course_Info{
+  width: 80%;
+  background: rgba(0,0,0,0.5);
+  padding: 30px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  backdrop-filter: blur(10px);
+  display: none;
+}
+.hidden {
+    display: none;
+}
+
+/* INPUTS */
+.Schedule_Info input {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+}
+
+/* BUTTON */
+.Create_Schedule {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: #ff5a5f;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.Create_Schedule:hover {
+  background: #e14b50;
+}
+.Go_Back{
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background:transparent;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+  border-color: white;
+}
+.Go_Back:hover{
+    background-color: white;
+    color: red;
+    
+}
+.Msge{
+    color: rgb(169, 0, 0);
+    font-size: small;
+    align-self: center;
+}
+.TableData{
+
+    background-color: #1e1e2f;
+    background-size: 50%;
+}
+.TableData:hover{
+    background-color: #2c2c45;
+}
+.TableData_NotIncluded{
+    
+    opacity: 50%;   
+    text-decoration: line-through;
+}
+
+td.active {
+    background-color: #2c2c45;
+}
+
+/* RESPONSIVE */
+@media (max-width: 800px) {
+  .Main {
+    flex-direction: column;
+  }
+
+  .Left, .Right {
+    flex: none;
+    height: 50%;
+  }
+
+  .Schedule_Box {
+    width: 90%;
+    height: 90%;
+  }
+}

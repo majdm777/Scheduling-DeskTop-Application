@@ -1,0 +1,85 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+/* Background */
+body {
+  height: 100vh;
+  background-image: url(IMAGES/indexWallpeper.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover; /* use contain if you don’t want cropping */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Fix typo: dev -> div */
+.main_Page {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Card */
+.start-box {
+  margin-top: 12%;
+  background: rgba(36, 35, 35, 0.6);
+  padding: 40px 50px;
+  border-radius: 20px;
+  text-align: center;
+  justify-content: center;
+  color: white;
+  backdrop-filter: blur(10px);
+  width: 50%;
+  
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Title */
+.start-box p {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  letter-spacing: 1px;
+}
+
+/* Buttons */
+button {
+  width: 50%;
+  padding: 3%;
+  margin: 2% 0;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* Start button */
+.Start-button {
+  background: #ff5a5f;
+  color: white;
+}
+
+.Start-button:hover {
+  background: #e14b50;
+  transform: scale(1.05);
+}
+
+/* Settings button */
+button:not(.Start-button) {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+button:not(.Start-button):hover {
+  background: white;
+  color: black;
+}

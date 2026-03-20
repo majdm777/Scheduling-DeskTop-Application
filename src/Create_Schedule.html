@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Create_Schedule.css">
+    <title>Document</title>
+</head>
+<body>
+<div class="Main">
+
+  <!-- LEFT (BIGGER) -->
+  <div class="Left">
+    <div class="Schedule_Box">
+      <table class="schedule">
+
+      </table>      
+
+    </div>
+  </div>
+
+  <!-- RIGHT (SMALLER) -->
+  <div class="Right">
+    <div class="Schedule_Info">
+        <h2>Create Schedule</h2>
+        <p class="Msge"></p>
+
+        <input type="text" placeholder="Schedule Name" id="Schedule_Name">
+        <input type="date" id="Start_Date">
+        <input type="date"id="End_Date">
+
+        <button class="Create_Schedule" onclick="validate_input()">Save</button>
+        <a href="Home.html"><button class="Go_Back" >Go Back</button></a>
+    
+    </div>
+    <div class="Course_Info">
+        <h2>Add Course</h2>
+        <p class="Msge" id="date"></p>
+
+        <input type="text" placeholder="Schedule Name" id="Schedule_Name">
+        <input type="date" id="Start_Date">
+        <input type="date"id="End_Date">
+
+        <button class="Create_Schedule" onclick="validate_input()">Save</button>
+        <a href="Home.html"><button class="Go_Back" >Go Back</button>
+    </div>
+  </div>
+
+</div>
+</body>
+<script src="Create_Schedule.js"></script>
+</html>
