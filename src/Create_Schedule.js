@@ -22,7 +22,7 @@ function validate_input(){
     if(start == end){
         message.innerHTML="the diff between the dates is not enough to create schedule "
     }
-    let days = Math.ceil((end - start) / (1000 * 60 * 60 * 24));
+    let days = Math.ceil((end - start) / (1000 * 60 * 60 * 24))+1;
     if(days <=1){message.innerHTML="the diff between the dates is not enough to create schedule "}
     message.innerHTML= days+" days left"
     
@@ -60,23 +60,21 @@ function CreateSchedule(days, start) {
                 if (currentDate > date) {
                     td.classList.add("TableData_NotIncluded");
                 }
-                            td.addEventListener("click", function () {
+                td.addEventListener("click", function () {
                 // console.log("Clicked date:", this.dataset.date);
-                this.classList.toggle("active");
-
-                Switch()
-
-                let msge = document.querySelector("#date")
-                msge.innerHTML="add course to this date"+ this.dataset.date;
+                openPopup()
 
 
-            });
+                });
+
 
                 count++;
             } else {
                 td.innerHTML = +(date.getMonth()+1)+"/"+date.getDate();
                 td.classList.add("TableData_NotIncluded");
+
             }
+
 
             // click event
 
@@ -86,7 +84,114 @@ function CreateSchedule(days, start) {
         }
 
         table.appendChild(tr);
+        
     }
+    Switch()
+}
+
+function openPopup() {
+    document.getElementById("popup").style.display = "flex";
+}
+
+function closePopup() {
+    document.getElementById("courseName").value = "";
+    document.getElementById("chaptersContainer").innerHTML = "";
+    document.getElementById("popup").style.display = "none";
+}
+
+function addChapter() {
+    let container = document.getElementById("chaptersContainer");
+    let name=document.getElementById("courseName")
+    if(name.value.trim()==""){
+        alert("enter course name")
+        return
+    }
+    let inputs = document.querySelectorAll("#chaptersContainer input[type='text']");
+
+    inputs.forEach(input => {
+        if (input.value.trim() == "") {
+            alert("fill all inputs first")
+            inputs.remove()
+            return
+        }
+    });
+
+
+    let newChapter= document.createElement("div")
+    newChapter.classList.add("Chapter_Info")
+    newChapter.innerHTML=`<input type="text" class="Chapter_Name"><input type="date" class="Chapter_date">`
+    
+
+    container.appendChild(newChapter);
+    
+
+}
+
+
+function saveCourse() {
+    let courseName = document.getElementById("courseName").value;
+
+    let chapters = [];
+
+    let chapterDivs = document.querySelectorAll(".Chapter_Info");
+
+    chapterDivs.forEach(div => {
+    let name = div.querySelector(".Chapter_Name").value;
+    let date = div.querySelector(".Chapter_date").value;
+
+    if (name && date) {
+        chapters.push({ name, date });
+    }
+    });
+
+    console.log("Course:", courseName);
+    console.log("Chapters:", chapters);
+
+    // TODO: save to SQLite later
+    addcourse(courseName,chapters)
+
+    document.getElementById("courseName").value = "";
+    document.getElementById("chaptersContainer").innerHTML = "";
+
+    closePopup();
+}
+
+// add course to the course container
+
+function addcourse(courseName, Chapters) {
+
+    let container = document.querySelector(".Course_Container");
+
+    let newCourse = document.createElement("div");
+    newCourse.classList.add("Course_Card");
+
+    // header
+    let header = document.createElement("div");
+    header.classList.add("Course_Name");
+    header.innerHTML = `
+        <h3>${courseName}</h3>
+        <p>0/${Chapters.length}</p>
+    `;
+
+    newCourse.appendChild(header);
+
+    // chapters
+    let count = 1;
+
+    Chapters.forEach(chapter => {
+        let chapterDiv = document.createElement("div");
+        chapterDiv.classList.add("Chapter_Name");
+
+        chapterDiv.innerHTML = `
+            <p>chapter-${count} ${chapter.name} (${chapter.date})</p>
+            <input type="checkbox">
+        `;
+
+        newCourse.appendChild(chapterDiv);
+        count++
+    });
+
+    container.appendChild(newCourse);
 }
 
 function Switch() {

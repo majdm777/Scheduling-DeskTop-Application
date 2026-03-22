@@ -29,23 +29,88 @@
         <input type="date" id="Start_Date">
         <input type="date"id="End_Date">
 
-        <button class="Create_Schedule" onclick="validate_input()">Save</button>
-        <a href="Home.html"><button class="Go_Back" >Go Back</button></a>
+        <button class="Create_Schedule" onclick="validate_input()">Create Schedule</button>
+        <a href="Home.html"><button class="Go_Back" >Exit</button></a>
+      <!-- <button class="Create_Schedule" onclick="openPopup()">Add Course</button> -->
     
     </div>
     <div class="Course_Info">
         <h2>Add Course</h2>
-        <p class="Msge" id="date"></p>
+        <!-- <p class="Msge" id="date"></p> -->
 
-        <input type="text" placeholder="Schedule Name" id="Schedule_Name">
+        <!-- <input type="text" placeholder="Schedule Name" id="Schedule_Name">
         <input type="date" id="Start_Date">
-        <input type="date"id="End_Date">
+        <input type="date"id="End_Date"> -->
 
-        <button class="Create_Schedule" onclick="validate_input()">Save</button>
-        <a href="Home.html"><button class="Go_Back" >Go Back</button>
+        <button class="Create_Schedule" onclick="openPopup()">ADD</button>
+        <button class="Go_Back"  onclick="Switch()">Go Back</button>
     </div>
   </div>
+  
+  
 
+</div>
+<h1>Courses</h1>
+<div class="Course_Container">
+
+  <div class="Course_Card">
+    <div class="Course_Name">
+      <h3>course Name</h3>
+      <p>0/3</p>
+    </div>
+    <div class="Chapter_Name">
+      <p>chapter 1</p>
+      <input type="checkbox">
+    </div>
+        <div class="Chapter_Name">
+      <p>chapter 1</p>
+      <input type="checkbox">
+    </div>
+    <div class="Chapter_Name">
+      <p>chapter 1</p>
+      <input type="checkbox">
+    </div>
+        <div class="Chapter_Name">
+      <p>chapter 1</p>
+      <input type="checkbox">
+    </div>
+    <div class="Chapter_Name">
+      <p>chapter 1</p>
+      <input type="checkbox">
+    </div>    
+    <div class="Chapter_Name">
+      <p>chapter 1</p>
+      <input type="checkbox">
+    </div>    
+  </div>
+
+
+
+  
+</div>
+  
+</div>
+
+
+
+
+<div class="popup" id="popup">
+  <div class="popup-content">
+
+    <h2>Add Course</h2>
+
+    <input type="text" id="courseName" placeholder="Course name">
+
+    <div id="chaptersContainer"></div>
+
+    <button onclick="addChapter()">+ Add Chapter</button>
+
+    <div class="popup-actions">
+      <button onclick="saveCourse()">Save</button>
+      <button onclick="closePopup()">Cancel</button>
+    </div>
+
+  </div>
 </div>
 </body>
 <script src="Create_Schedule.js"></script>
