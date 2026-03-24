@@ -1,4 +1,11 @@
+let NUMBER_OF_DAYS=0
+let SCHEDULE_NAME;
+let START_DATE;
+let END_DATE
+let COURSES = [];
+let CHAPTERS=[];
 
+let DEFAULT_DATE;
 
 function validate_input(){
     let Name = document.querySelector("#Schedule_Name").value 
@@ -10,6 +17,7 @@ function validate_input(){
         message.innerHTML = "Fill all the inputs";
         return;
     }
+    SCHEDULE_NAME=Name;
     let start = new Date(start_date)
     let end = new Date(end_date)
     start.setHours(0,0,0,0)
@@ -25,7 +33,14 @@ function validate_input(){
     let days = Math.ceil((end - start) / (1000 * 60 * 60 * 24))+1;
     if(days <=1){message.innerHTML="the diff between the dates is not enough to create schedule "}
     message.innerHTML= days+" days left"
-    
+
+    //set the global variables
+    NUMBER_OF_DAYS=days
+    START_DATE=start
+    END_DATE=end
+    //set the default date to the first date of the schedule
+    DEFAULT_DATE = START_DATE.toISOString().split("T")[0];
+
     CreateSchedule(days,start)
 }
 
@@ -54,14 +69,20 @@ function CreateSchedule(days, start) {
                 let formatted = (date.getMonth() + 1) + "/" + date.getDate();
                 td.innerHTML = formatted;
 
-                // store date safely
-                td.dataset.date = +(date.getMonth()+1)+"/"+date.getDate();
+
+                
 
                 if (currentDate > date) {
                     td.classList.add("TableData_NotIncluded");
                 }
                 td.addEventListener("click", function () {
                 // console.log("Clicked date:", this.dataset.date);
+                DEFAULT_DATE=td.dataset.date;
+                // td.style.backgroundImage="url('building_icons/building.png')"
+                // td.style.backgroundPosition="center"
+                // td.style.backgroundSize="40%"
+                // td.style.backgroundRepeat="no-repeat"
+                
                 openPopup()
 
 
@@ -80,12 +101,15 @@ function CreateSchedule(days, start) {
 
 
             date.setDate(date.getDate() + 1);
+            // store date safely
+            td.dataset.date = date.toISOString().split("T")[0];
             tr.appendChild(td);
         }
 
         table.appendChild(tr);
         
     }
+
     Switch()
 }
 
@@ -102,12 +126,14 @@ function closePopup() {
 function addChapter() {
     let container = document.getElementById("chaptersContainer");
     let name=document.getElementById("courseName")
-    if(name.value.trim()==""){
+
+    if(name.value.trim()=="" || COURSES.some(c => c.name === name.value.trim())){
         alert("enter course name")
         return
     }
     let inputs = document.querySelectorAll("#chaptersContainer input[type='text']");
-
+    
+    
     inputs.forEach(input => {
         if (input.value.trim() == "") {
             alert("fill all inputs first")
@@ -115,13 +141,38 @@ function addChapter() {
             return
         }
     });
+    let InputsDate =document.querySelectorAll("#chaptersContainer input[type='date']")
+    for (let input of InputsDate) {
+
+        if (input.value === "") {
+            alert("date is required");
+            return;
+        }
+
+        let inputDate = new Date(input.value);
+        inputDate.setHours(0,0,0,0);
+
+        if (inputDate > END_DATE || inputDate < START_DATE) {
+            alert("the date is invalid");
+            return;
+        }
+    }
 
 
     let newChapter= document.createElement("div")
     newChapter.classList.add("Chapter_Info")
-    newChapter.innerHTML=`<input type="text" class="Chapter_Name"><input type="date" class="Chapter_date">`
-    
+    let nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.className = "Chapter_Name";
 
+    let dateInput = document.createElement("input");
+    dateInput.type = "date";
+    dateInput.className = "Chapter_date";
+    dateInput.value=DEFAULT_DATE;
+
+
+    newChapter.appendChild(nameInput);
+    newChapter.appendChild(dateInput);
     container.appendChild(newChapter);
     
 
@@ -141,14 +192,26 @@ function saveCourse() {
 
     if (name && date) {
         chapters.push({ name, date });
+        CHAPTERS.push({
+            Name : name,
+            Date: date,
+            forCourse:courseName
+        })
     }
     });
 
-    console.log("Course:", courseName);
-    console.log("Chapters:", chapters);
+    console.log(CHAPTERS)
 
     // TODO: save to SQLite later
     addcourse(courseName,chapters)
+    let number_of_chapters=chapters.length
+
+    // add course to the global array
+    COURSES.push({
+    name: courseName,
+    number_of_chapters: number_of_chapters
+    });
+    
 
     document.getElementById("courseName").value = "";
     document.getElementById("chaptersContainer").innerHTML = "";
@@ -184,7 +247,7 @@ function addcourse(courseName, Chapters) {
 
         chapterDiv.innerHTML = `
             <p>chapter-${count} ${chapter.name} (${chapter.date})</p>
-            <input type="checkbox">
+            
         `;
 
         newCourse.appendChild(chapterDiv);
