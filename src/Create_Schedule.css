@@ -128,17 +128,25 @@ body {
     
 }
 .Msge{
-    color: rgb(169, 0, 0);
-    font-size: small;
-    align-self: center;
+  color: rgb(169, 0, 0);
+  font-size: small;
+  align-self: center;
 }
 .TableData{
 
-    background-color: #1e1e2f;
-    background-size: 50%;
+background-color: #1e1e2f;
+background-size: 40%;
+background-position: center;
+background-repeat: no-repeat;
+transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
 }
 .TableData:hover{
-    background-color: #2c2c45;
+  background-color: #2c2c45;
+  transform: scale(1.2);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  z-index: 10;
+  opacity: 90%;
 }
 .TableData_NotIncluded{
     
@@ -230,8 +238,17 @@ td.active {
 }
  .Chapter_Info{
   margin: 5px;
+  gap: 5px
 
  }
+
+ .Chapter_Cancel_Button{
+  cursor: pointer;
+  margin-left: 5px;
+ }
+.Chapter_Cancel_Button:hover{
+  color: #e14b50;
+}
 
 /* RESPONSIVE */
 @media (max-width: 800px) {

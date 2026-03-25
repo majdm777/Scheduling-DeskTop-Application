@@ -1,5 +1,6 @@
 let NUMBER_OF_DAYS=0
 let SCHEDULE_NAME;
+let CHAPTERS_PER_DATE=[];
 let START_DATE;
 let END_DATE
 let COURSES = [];
@@ -7,7 +8,16 @@ let CHAPTERS=[];
 
 let DEFAULT_DATE;
 
+function navigator(){
+    validate_input();
+    Switch()
+}
+
 function validate_input(){
+
+    COURSES = []
+    CHAPTERS=[]
+    CHAPTERS_PER_DATE=[]
     let Name = document.querySelector("#Schedule_Name").value 
     let start_date=document.querySelector("#Start_Date").value
     let end_date=document.querySelector("#End_Date").value
@@ -20,8 +30,8 @@ function validate_input(){
     SCHEDULE_NAME=Name;
     let start = new Date(start_date)
     let end = new Date(end_date)
-    start.setHours(0,0,0,0)
-    end.setHours(0,0,0,0)
+    // start.setHours(0,0,0,0)
+    // end.setHours(0,0,0,0)
 
     if(start>end){
         message.innerHTML=" the start date shoud be before the end date"
@@ -41,20 +51,35 @@ function validate_input(){
     //set the default date to the first date of the schedule
     DEFAULT_DATE = START_DATE.toISOString().split("T")[0];
 
-    CreateSchedule(days,start)
+    //set the CHAPTERS_PER_DATE array 
+    let temp_date = new Date(start_date)
+    for(let i=0;i<days;i++){
+        CHAPTERS_PER_DATE.push({
+            _DATE:temp_date.toISOString().split("T")[0],
+            _Number_Of_Chapters: 0
+
+        })
+        temp_date.setDate(temp_date.getDate()+1)
+        
+    }
+    
+    CreateSchedule()
 }
 
 
-function CreateSchedule(days, start) {
+function CreateSchedule() {
+
     let table = document.querySelector(".schedule");
     table.innerHTML = "";
-
+    let days = Math.ceil((END_DATE - START_DATE) / (1000 * 60 * 60 * 24))+1
     let size = Math.ceil(Math.sqrt(days));
     let count = 0;
 
-    let date = new Date(start);
+    let date = new Date(START_DATE);
     let currentDate = new Date();
-    currentDate.setHours(0,0,0,0);
+    currentDate.setHours(0,0,0);
+    
+    let _index_Date=0;
 
     for (let i = 0; i < size; i++) {
         let tr = document.createElement("tr");
@@ -62,11 +87,16 @@ function CreateSchedule(days, start) {
         for (let j = 0; j < size; j++) {
             let td = document.createElement("td");
             td.classList.add("TableData");
+            let formatted = (date.getMonth() + 1) + "/" + date.getDate();
+            let _Building_Level = -1
+            let _Date=CHAPTERS_PER_DATE[_index_Date]
 
             if (count < days) {
+                // set wallpaper according to the level(number of chapters assigned to this date.)
+                _Building_Level=_Date._Number_Of_Chapters;
 
-                // format date string
-                let formatted = (date.getMonth() + 1) + "/" + date.getDate();
+
+                // format date string        
                 td.innerHTML = formatted;
 
 
@@ -75,42 +105,52 @@ function CreateSchedule(days, start) {
                 if (currentDate > date) {
                     td.classList.add("TableData_NotIncluded");
                 }
+                // onclick
                 td.addEventListener("click", function () {
-                // console.log("Clicked date:", this.dataset.date);
-                DEFAULT_DATE=td.dataset.date;
-                // td.style.backgroundImage="url('building_icons/building.png')"
-                // td.style.backgroundPosition="center"
-                // td.style.backgroundSize="40%"
-                // td.style.backgroundRepeat="no-repeat"
-                
+                DEFAULT_DATE=this.dataset.date;
                 openPopup()
-
-
                 });
 
-
+                _index_Date++;
                 count++;
             } else {
-                td.innerHTML = +(date.getMonth()+1)+"/"+date.getDate();
+                td.innerHTML = formatted;
                 td.classList.add("TableData_NotIncluded");
 
             }
 
 
+
+
+            if(_Building_Level===0){
+                td.style.backgroundImage="url('building_icons/planing.png')"
+            }else if(_Building_Level<0){
+                td.style.backgroundImage="url('building_icons/barrier.png')"                
+            }else if(_Building_Level<=2){
+                td.style.backgroundImage="url('building_icons/blocks_low_level.png')"
+            }else if(_Building_Level<=3){
+                td.style.backgroundImage="url('building_icons/blocks_middle_level.png')"
+            }else if(_Building_Level<=4){
+                td.style.backgroundImage="url('building_icons/blocks_high_level.png')"                
+            }else{
+                td.style.backgroundImage="url('building_icons/barrier.png')"
+            }
+
+
             // click event
 
-
+            td.dataset.date = date.toISOString().split("T")[0];
             date.setDate(date.getDate() + 1);
             // store date safely
-            td.dataset.date = date.toISOString().split("T")[0];
+            
+
             tr.appendChild(td);
         }
 
         table.appendChild(tr);
         
     }
-
-    Switch()
+    console.log(CHAPTERS_PER_DATE)
 }
 
 function openPopup() {
@@ -127,7 +167,7 @@ function addChapter() {
     let container = document.getElementById("chaptersContainer");
     let name=document.getElementById("courseName")
 
-    if(name.value.trim()=="" || COURSES.some(c => c.name === name.value.trim())){
+    if(name.value.trim()==""){
         alert("enter course name")
         return
     }
@@ -187,74 +227,115 @@ function saveCourse() {
     let chapterDivs = document.querySelectorAll(".Chapter_Info");
 
     chapterDivs.forEach(div => {
-    let name = div.querySelector(".Chapter_Name").value;
-    let date = div.querySelector(".Chapter_date").value;
+        let name = div.querySelector(".Chapter_Name").value;
+        let date = div.querySelector(".Chapter_date").value;
 
-    if (name && date) {
-        chapters.push({ name, date });
-        CHAPTERS.push({
-            Name : name,
-            Date: date,
-            forCourse:courseName
-        })
-    }
+        if (name && date) {
+            chapters.push({ name, date });
+            CHAPTERS.push({
+                Name : name,
+                Date: date,
+                forCourse:courseName
+            })
+
+        }
+    });
+
+    chapters.forEach(ch => {
+        let assigned = CHAPTERS_PER_DATE.find(n => n._DATE === ch.date);
+        if (assigned) assigned._Number_Of_Chapters++;
     });
 
     console.log(CHAPTERS)
 
     // TODO: save to SQLite later
-    addcourse(courseName,chapters)
+    
     let number_of_chapters=chapters.length
 
-    // add course to the global array
-    COURSES.push({
-    name: courseName,
-    number_of_chapters: number_of_chapters
-    });
-    
+    // add course to the global array if not already existed
+    let isExisted=COURSES.find(c => c.name.toLowerCase() === courseName.trim().toLowerCase());
+    if(isExisted){
+        //
+        isExisted.number_of_chapters+=chapters.length
+    }else{
+        // new course
+        COURSES.push({
+        name: courseName.trim(),
+        number_of_chapters: number_of_chapters
+        })
+    }
+    console.log(COURSES)
 
     document.getElementById("courseName").value = "";
     document.getElementById("chaptersContainer").innerHTML = "";
 
+    addcourse()
+    CreateSchedule();
     closePopup();
 }
 
 // add course to the course container
 
-function addcourse(courseName, Chapters) {
+function addcourse() {
 
     let container = document.querySelector(".Course_Container");
+    container.innerHTML=""
 
-    let newCourse = document.createElement("div");
-    newCourse.classList.add("Course_Card");
 
-    // header
-    let header = document.createElement("div");
-    header.classList.add("Course_Name");
-    header.innerHTML = `
-        <h3>${courseName}</h3>
-        <p>0/${Chapters.length}</p>
-    `;
+    COURSES.forEach(course =>{
+        if(course.number_of_chapters>0){
+            let newCourse = document.createElement("div");
+            newCourse.classList.add("Course_Card");
 
-    newCourse.appendChild(header);
+            // header
+            let header = document.createElement("div");
+            header.classList.add("Course_Name");
+            header.innerHTML = `
+                <h3>${course.name}</h3>
+                <p>0/${course.number_of_chapters}</p>
+            `;
+            newCourse.appendChild(header); 
+            let count =1
+            CHAPTERS.forEach(chapter =>{
+                if(chapter.forCourse===course.name){
+                        let chapterDiv = document.createElement("div");
+                        chapterDiv.classList.add("Chapter_Name");
 
-    // chapters
-    let count = 1;
+                        let chapterInfo= document.createElement("p")
+                        chapterInfo.textContent=`chapter-${count} ${chapter.Name} (${chapter.Date})`
 
-    Chapters.forEach(chapter => {
-        let chapterDiv = document.createElement("div");
-        chapterDiv.classList.add("Chapter_Name");
+                        let  Cancel_Button = document.createElement("p")
+                        Cancel_Button.classList.add("Chapter_Cancel_Button")
 
-        chapterDiv.innerHTML = `
-            <p>chapter-${count} ${chapter.name} (${chapter.date})</p>
-            
-        `;
+                        //might change later
+                        Cancel_Button.textContent="X"
 
-        newCourse.appendChild(chapterDiv);
-        count++
-    });
+                        Cancel_Button.addEventListener("click",function(){
+                            CHAPTERS = CHAPTERS.filter(ch => 
+                                !(ch.Name === chapter.Name && ch.Date === chapter.Date && ch.forCourse === course.name)
+                            );
+                            let temp = CHAPTERS_PER_DATE.find(nb => nb._DATE === chapter.Date)
+                            temp._Number_Of_Chapters--;
+                            let tempcou= COURSES.find(co=> co.name === course.name)
+                            tempcou.number_of_chapters--;
 
-    container.appendChild(newCourse);
+                            CreateSchedule();
+                            addcourse();
+                        })
+
+                        chapterDiv.appendChild(chapterInfo)
+                        chapterDiv.appendChild(Cancel_Button)
+
+                        newCourse.appendChild(chapterDiv);
+                        count++
+
+                }
+            })
+            container.appendChild(newCourse);  
+        }             
+    })
+
+    
 }
 
 function Switch() {
