@@ -6,11 +6,15 @@ let END_DATE
 let COURSES = [];
 let CHAPTERS=[];
 
+//database
+
+
 let DEFAULT_DATE;
 
 function navigator(){
-    validate_input();
-    Switch()
+    if (validate_input()) {
+        Switch();
+    }
 }
 
 function validate_input(){
@@ -33,21 +37,32 @@ function validate_input(){
     // start.setHours(0,0,0,0)
     // end.setHours(0,0,0,0)
 
-    if(start>end){
-        message.innerHTML=" the start date shoud be before the end date"
+
+
+    if (start > end) {
+        message.innerHTML = "The start date should be before the end date";
+        return false;
     }
 
-    if(start == end){
-        message.innerHTML="the diff between the dates is not enough to create schedule "
+    if (start.getTime() === end.getTime()) {
+        message.innerHTML = "The difference between the dates is not enough to create schedule";
+        return false;
     }
-    let days = Math.ceil((end - start) / (1000 * 60 * 60 * 24))+1;
-    if(days <=1){message.innerHTML="the diff between the dates is not enough to create schedule "}
-    message.innerHTML= days+" days left"
+
+    let days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    if (days <= 1) {
+        message.innerHTML = "The difference between the dates is not enough to create schedule";
+        return false;
+    }
+
+    message.innerHTML = days + " days left";
 
     //set the global variables
     NUMBER_OF_DAYS=days
     START_DATE=start
+    
     END_DATE=end
+    
     //set the default date to the first date of the schedule
     DEFAULT_DATE = START_DATE.toISOString().split("T")[0];
 
@@ -63,7 +78,8 @@ function validate_input(){
         
     }
     
-    CreateSchedule()
+    CreateSchedule();
+    return true;
 }
 
 
@@ -130,7 +146,7 @@ function CreateSchedule() {
                 td.style.backgroundImage="url('building_icons/blocks_low_level.png')"
             }else if(_Building_Level<=3){
                 td.style.backgroundImage="url('building_icons/blocks_middle_level.png')"
-            }else if(_Building_Level<=4){
+            }else if(_Building_Level>3){
                 td.style.backgroundImage="url('building_icons/blocks_high_level.png')"                
             }else{
                 td.style.backgroundImage="url('building_icons/barrier.png')"
@@ -172,16 +188,15 @@ function addChapter() {
         return
     }
     let inputs = document.querySelectorAll("#chaptersContainer input[type='text']");
-    
-    
-    inputs.forEach(input => {
-        if (input.value.trim() == "") {
-            alert("fill all inputs first")
-            inputs.remove()
-            return
+
+    for (let input of inputs) {
+        if (input.value.trim() === "") {
+            alert("fill all inputs first");
+            return;
         }
-    });
-    let InputsDate =document.querySelectorAll("#chaptersContainer input[type='date']")
+    }
+
+    let InputsDate = document.querySelectorAll("#chaptersContainer input[type='date']")
     for (let input of InputsDate) {
 
         if (input.value === "") {
@@ -190,7 +205,7 @@ function addChapter() {
         }
 
         let inputDate = new Date(input.value);
-        inputDate.setHours(0,0,0,0);
+        
 
         if (inputDate > END_DATE || inputDate < START_DATE) {
             alert("the date is invalid");
@@ -221,6 +236,8 @@ function addChapter() {
 
 function saveCourse() {
     let courseName = document.getElementById("courseName").value;
+
+    if(!courseName.trim()){alert("please add course name"); return}
 
     let chapters = [];
 
@@ -350,4 +367,60 @@ function Switch() {
         course.style.display = "none";
     }
 }
+
+// save to the database
+function SaveDATE(){
+
+
+    START_DATE=START_DATE.toISOString().split("T")[0];
+    END_DATE=END_DATE.toISOString().split("T")[0];
+    console.log( NUMBER_OF_DAYS,"\b",
+    SCHEDULE_NAME,"\b",
+    CHAPTERS_PER_DATE,"\b",
+    START_DATE,"\b",
+    END_DATE,"\b",
+    COURSES,"\b",
+    CHAPTERS)
+    let Number_Of_Courses = COURSES.length
+
+    window.api.saveSchedule({
+        name : SCHEDULE_NAME, 
+        start : START_DATE, 
+        end : END_DATE, 
+        Bar : 0, 
+        Num_Cor : Number_Of_Courses, 
+        State : "Not Completed", 
+        Assigned_Chapters : CHAPTERS_PER_DATE
+    });
+
+window.api.onScheduleSaved((event, res) => {
+
+    if (!res.success) return;
+
+    // NOW save courses
+    COURSES.forEach(course => {
+        window.api.saveCourse({
+            name: course.name,
+            schedule_Name: SCHEDULE_NAME,
+            number_of_chapters: course.number_of_chapters
+        });
+    });
+
+    // THEN chapters
+    CHAPTERS.forEach(ch => {
+        window.api.saveChapter({
+            name: ch.Name,
+            date: ch.Date,
+            ForSchedule: SCHEDULE_NAME,
+            ForCourse: ch.forCourse
+        });
+    });
+    window.location.href="Home.html";
+    console.log("✅ ALL SAVED");
+});
+}
+
+
+
+
 

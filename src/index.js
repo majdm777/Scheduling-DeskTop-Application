@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
 
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
@@ -13,7 +14,9 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-    },
+      contextIsolation: true,
+      nodeIntegration: false
+    }
   });
 
   // and load the index.html of the app.
@@ -44,8 +47,87 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
+
   }
 });
 
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+//-----------------------------------------------------------------------------------------
+const db = require('./database');
+const { ipcMain } = require('electron');
+
+ipcMain.on('save-schedule', (event, data) => {
+    const { name, start, end, Bar, Num_Cor, State, Assigned_Chapters } = data;
+
+    db.run(
+        `INSERT INTO schedules 
+        (name, start_date, end_date, completion_Bar, Number_Of_Courses, State) 
+        VALUES (?, ?, ?, ?, ?, ?)`,
+        [name, start, end, Bar, Num_Cor, State],
+        function (err) {
+
+            if (err) {
+                console.log(err);
+                event.reply('schedule-saved', { success: false });
+                return;
+            }
+
+            console.log("✅ Schedule saved");
+
+            // save assigned chapters
+            Assigned_Chapters.forEach(ch => {
+                db.run(
+                    `INSERT INTO Assigned_Chapters (Schedule_Name, DATE, Count) 
+                     VALUES (?, ?, ?)`,
+                    [name, ch._DATE, ch._Number_Of_Chapters]
+                );
+            });
+
+            event.reply('schedule-saved', { success: true });
+        }
+    );
+});
+
+
+ipcMain.on('save-course', (event, data) => {
+  const { name, schedule_Name, number_of_chapters } = data;
+
+  db.run(
+      `INSERT INTO courses 
+      (name, schedule_Name, Number_Of_Chapters, Number_Of_Completed_Chapters, State) 
+      VALUES (?, ?, ?, ?, ?)`,
+      [name, schedule_Name, number_of_chapters, 0, "Not-Completed"],
+      (err) => {
+          if (err) console.log(err);
+          else console.log("✅ Course saved");
+      }
+  );
+});
+
+ipcMain.on('save-chapter', (event, data) => {
+    const { name, date, ForSchedule, ForCourse } = data;
+
+    db.run(
+        `INSERT INTO chapters 
+        (name, date, ForSchedule, ForCourse, State) 
+        VALUES (?, ?, ?, ?, ?)`,
+        [name, date, ForSchedule, ForCourse, "Not-Completed"],
+        (err) => {
+            if (err) console.log(err);
+            else console.log("✅ Chapter saved");
+        }
+    );
+});
+
+
+ipcMain.handle('get-schedules', async () => {
+    return new Promise((resolve, reject) => {
+        db.all("SELECT * FROM schedules", [], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+        });
+    });
+});
+

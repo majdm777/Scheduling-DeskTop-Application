@@ -109,6 +109,11 @@ body {
   color: #bbb;
 }
 
+.message{
+  color: grey;
+  text-align: center;
+  opacity: 90%;
+}
 /* RESPONSIVE */
 @media (max-width: 600px) {
   .Navigation_bar {
