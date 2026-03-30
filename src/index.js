@@ -57,6 +57,8 @@ app.on('window-all-closed', () => {
 //-----------------------------------------------------------------------------------------
 const db = require('./database');
 const { ipcMain } = require('electron');
+const { resolve } = require('node:dns');
+const { scheduler } = require('node:timers/promises');
 
 ipcMain.on('save-schedule', (event, data) => {
     const { name, start, end, Bar, Num_Cor, State, Assigned_Chapters } = data;
@@ -130,4 +132,47 @@ ipcMain.handle('get-schedules', async () => {
         });
     });
 });
+
+
+ipcMain.handle('get-schedule',async (event , data) =>{
+  const name =data;
+  return new Promise((resolve,reject) =>{
+    db.all("SELECT * FROM schedules WHERE name = ?",[name],(err,schedule)=>{
+      if(err) reject(err)
+      else resolve(schedule)
+    });
+  });
+});
+
+
+ipcMain.handle('get-courses', async (event , data)=>{
+  const name =data;
+  return new Promise((resolve,reject)=>{
+    db.all("SELECT * FROM courses WHERE schedule_name = ?",[name],(err,courses)=>{
+      if(err) reject(err);
+      else resolve(courses);   
+    });
+  });
+});
+
+
+ipcMain.handle('get-chapters',async (event,data)=>{
+  const name = data;
+  return new Promise((resolve,reject)=>{
+    db.all("SELECT * FROM chapters WHERE ForSchedule = ?",[name],(err,chapters)=>{
+      if(err) reject(err);
+      else resolve(chapters);   
+    });
+  });
+})
+
+ipcMain.handle('get-assigned-chapters',async (event,data)=>{
+  const name = data;
+  return new Promise((resolve,reject)=>{
+    db.all("SELECT * FROM Assigned_Chapters WHERE Schedule_Name = ?",[name],(err,assigned_chapter)=>{
+      if(err) reject(err);
+      else resolve(assigned_chapter);   
+    });
+  });
+})
 

@@ -415,7 +415,7 @@ window.api.onScheduleSaved((event, res) => {
             ForCourse: ch.forCourse
         });
     });
-    window.location.href="Home.html";
+    // window.location.href="Home.html";
     console.log("✅ ALL SAVED");
 });
 }

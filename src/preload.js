@@ -12,4 +12,8 @@ contextBridge.exposeInMainWorld('api', {
     saveCourse: (data) => ipcRenderer.send('save-course', data),
     saveChapter: (data) => ipcRenderer.send('save-chapter', data),
     getSchedules: () => ipcRenderer.invoke('get-schedules'),
+    getSchedule : (data) => ipcRenderer.invoke('get-schedule',data),
+    getCourses : (data) => ipcRenderer.invoke('get-courses',data),
+    getChapters : (data) => ipcRenderer.invoke('get-chapters',data),
+    getAssignedChapters : (data) => ipcRenderer.invoke('get-assigned-chapters',data),    
 });

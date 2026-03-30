@@ -3,7 +3,7 @@ let MESSAGE = document.getElementsByClassName("message");
 
 async function loadSchedules() {
     if (!window.api?.getSchedules) {
-        MESSAGE.innerHTML="Failed to load Schedule. Please Try Teload The Page"
+        MESSAGE.innerHTML="Failed to load Schedule. Please Try To reload The Page"
         return;
     }
 
@@ -38,7 +38,9 @@ function displaySchedule(schedules){
                                     <h3 class="Info_Detail" id="State">${element.State}</h3>
                                     <h3 id="END_DATE" class="Info_Detail">${element.end_date}</h3>
                                 </div>`
-        
+        newSchedule.addEventListener("click", function(){
+            window.location.href=`View.html?name=${encodeURIComponent(element.name)}`
+        })
         Container.appendChild(newSchedule)
         
     };
