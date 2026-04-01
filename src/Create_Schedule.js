@@ -381,6 +381,10 @@ function SaveDATE(){
     END_DATE,"\b",
     COURSES,"\b",
     CHAPTERS)
+    let Number_OF_All_Chapters=0;
+    COURSES.forEach(course =>{
+        Number_OF_All_Chapters=+ course.number_of_chapters;
+    })
     let Number_Of_Courses = COURSES.length
 
     window.api.saveSchedule({
@@ -388,7 +392,7 @@ function SaveDATE(){
         start : START_DATE, 
         end : END_DATE, 
         Bar : 0, 
-        Num_Cor : Number_Of_Courses, 
+        Num_Cor : Number_OF_All_Chapters, 
         State : "Not Completed", 
         Assigned_Chapters : CHAPTERS_PER_DATE
     });

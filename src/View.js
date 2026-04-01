@@ -277,16 +277,20 @@ function loadTodaysTask(){
                     chapter.State="Completed"
                     if(course.Number_Of_Completed_Chapters !== course.Number_Of_Chapters) course.Number_Of_Completed_Chapters++
                     if(course.Number_Of_Completed_Chapters === course.Number_Of_Chapters){
-                        course.State = "Completed"
-                        SCHEDULE.completion_Bar++
-                    }    
+                        course.State = "Completed"   
+                    } 
+                    SCHEDULE.completion_Bar++  
+                    if(SCHEDULE.completion_Bar===SCHEDULE.Number_Of_Courses)  SCHEDULE.State = "Completed"
                 } else {
                     chapter.State="Not Completed"
                     if(course.Number_Of_Completed_Chapters!==0) course.Number_Of_Completed_Chapters--
                     if(course.State=== "Completed"){
                         course.State = " Not Completed"
-                        SCHEDULE.completion_Bar--
+                        
                     }
+
+                    SCHEDULE.completion_Bar--
+                    if(SCHEDULE.State === "Completed") SCHEDULE.State="Not Completed";
                 }
                 
 
