@@ -381,10 +381,8 @@ function SaveDATE(){
     END_DATE,"\b",
     COURSES,"\b",
     CHAPTERS)
-    let Number_OF_All_Chapters=0;
-    COURSES.forEach(course =>{
-        Number_OF_All_Chapters=+ course.number_of_chapters;
-    })
+    let Number_OF_All_Chapters= CHAPTERS.length;
+
     let Number_Of_Courses = COURSES.length
 
     window.api.saveSchedule({
