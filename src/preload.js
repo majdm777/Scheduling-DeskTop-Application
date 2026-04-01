@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 console.log("✅ preload is running");
 
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, ipcMain } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
 
@@ -18,5 +18,6 @@ contextBridge.exposeInMainWorld('api', {
     getAssignedChapters : (data) => ipcRenderer.invoke('get-assigned-chapters',data),
     updateChapter : (data) => ipcRenderer.send('update-chapters',data),
     updateCourse : (data) => ipcRenderer.send('update-courses',data),
-    updateSchedule : (data) => ipcRenderer.send('update-schedule',data),    
+    updateSchedule : (data) => ipcRenderer.send('update-schedule',data),  
+    deleteSchedule : (data) => ipcRenderer.send('delete-schedule',data),  
 });

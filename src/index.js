@@ -220,6 +220,31 @@ ipcMain.on('update-schedule', async (event,data) =>{
 })
 
 
+//DELETE
+ipcMain.on('delete-schedule',async (event,data) => {
+  const schedule_name=data.schedule_name;
+  db.run('DELETE FROM schedules WHERE name = ?',[schedule_name],
+    (err) =>{
+      if(err){ 
+        console.log(err); 
+        return;
+      }
 
+      db.run('DELETE FROM courses WHERE schedule_Name =?',[schedule_name],
+        (err)=>{
+          if(err){console.log(err);
+            return 
+          }
+
+        db.run('DELETE FROM chapters WHERE ForSchedule =?',[schedule_name],
+          (err)=>{
+            if(err){console.log(err);
+              return 
+            }
+       })
+    })
+    console.log("schdeule deleted");
+  })
+})
 
 

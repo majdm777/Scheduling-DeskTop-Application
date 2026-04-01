@@ -76,6 +76,21 @@ body {
 .Schedule_info {
   margin-bottom: 15px;
 }
+.deleteButton{
+  padding: 5px;
+  border: none;
+  border-radius: 10px;
+  background:#ff5a5f;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+  border-color: white;
+}
+.deleteButton:hover{
+    background-color: white;
+    color: red;
+    
+}
 
 #SCH_NAME {
   font-size: 22px;
