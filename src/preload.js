@@ -15,5 +15,8 @@ contextBridge.exposeInMainWorld('api', {
     getSchedule : (data) => ipcRenderer.invoke('get-schedule',data),
     getCourses : (data) => ipcRenderer.invoke('get-courses',data),
     getChapters : (data) => ipcRenderer.invoke('get-chapters',data),
-    getAssignedChapters : (data) => ipcRenderer.invoke('get-assigned-chapters',data),    
+    getAssignedChapters : (data) => ipcRenderer.invoke('get-assigned-chapters',data),
+    updateChapter : (data) => ipcRenderer.send('update-chapters',data),
+    updateCourse : (data) => ipcRenderer.send('update-courses',data),
+    updateSchedule : (data) => ipcRenderer.send('update-schedule',data),    
 });

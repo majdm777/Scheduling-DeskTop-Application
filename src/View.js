@@ -24,7 +24,7 @@ async function loadInfo() {
     COURSES = await window.api.getCourses(SCHEDULE_NAME);
     CHAPTERS = await window.api.getChapters(SCHEDULE_NAME);
     ASSIGNED_CHAPTERS = await window.api.getAssignedChapters(SCHEDULE_NAME);
-    let DEFAULT_DATE =SCHEDULE.start_date;
+    DEFAULT_DATE =SCHEDULE.start_date;
     let NUMBER_OF_DAYS = ASSIGNED_CHAPTERS.length;
 
     console.log(SCHEDULE)
@@ -40,13 +40,41 @@ loadInfo().then(result => {
     if (!result) {
         document.querySelector(".Msge").innerHTML = "failed";
     }
+    
+
+    if(!updateData()) alert("Failed To Update The Date");
+
     LoadTable()
     addcourse()
+    loadTodaysTask()
 });
+
+
+// update later?
+function updateData(){
+    let currentDate = new Date()
+    currentDate.setHours(0,0,0,0);
+
+    for(let chapter of CHAPTERS){
+        let ch_date=new Date(chapter.date);
+        ch_date.setHours(0,0,0,0);
+        if(chapter.State==="Chapter Missed" || currentDate > ch_date){
+            if(chapter.State !== "Completed"){
+                chapter.State = "Chapter Missed";
+            }
+        }
+
+    }
+
+    return true
+}
+
+
+
 
 function LoadTable(){
 
-    console.log("building")
+    // console.log("building")
 
     let table = document.querySelector(".schedule")
     table.innerHTML='';
@@ -83,13 +111,52 @@ function LoadTable(){
 
                 td.dataset.date = date.toISOString().split("T")[0];
 
-                _Building_Level = ASSIGNED_CHAPTERS[_index].Count
+                let _temp_date = date.toISOString().split("T")[0];
+                let _assigned_chapter =ASSIGNED_CHAPTERS.find(ch => ch.DATE === _temp_date)
+
+                if(_assigned_chapter) _Building_Level=_assigned_chapter.Count;
+                else _Building_Level = 0;
 
                 td.innerHTML=formatted;
                 if (currentDate > date) {
 
                     td.classList.add("TableData_NotIncluded");
                 } 
+
+                td.addEventListener("mousemove", function (e) {
+                    let tooltip = document.getElementById("tooltip");
+
+                    let date = this.dataset.date;
+
+                    // get chapters for this date
+                    let chaptersForDate = CHAPTERS.filter(ch => ch.date === date);
+
+                    if (chaptersForDate.length === 0) {
+                        // tooltip.style.display = "none";  // optional
+                        tooltip.style.left = (e.clientX + 15) + "px";
+                        tooltip.style.top = (e.clientY + 15) + "px";
+                        tooltip.style.display = "block";
+
+                        tooltip.innerHTML=`<h3 style=" color:black">No Tasks For Today</h3>` 
+                        return;
+                    }
+
+
+                    // build content
+                    tooltip.innerHTML =`<h1 style="color:black">Today's Task</h1><br>`+ chaptersForDate
+                        .map(ch => `${ch.ForCourse} - ${ch.name}`)
+                        .join("<br>");
+
+                    // position near cursor
+                    tooltip.style.left = (e.clientX + 15) + "px";
+                    tooltip.style.top = (e.clientY + 15) + "px";
+
+                    tooltip.style.display = "block";
+                });
+
+                td.addEventListener("mouseleave", function () {
+                    document.getElementById("tooltip").style.display = "none";
+                });                
                 
                 _index++;
             }else{
@@ -170,8 +237,87 @@ function addcourse() {
     
 }
 
+function loadTodaysTask(){
+    let container = document.querySelector(".Tasks");
+    container.innerHTML = "";
+
+    let todaysDate = new Date();
+    let _Date_format = todaysDate.toISOString().split("T")[0];
+
+    if (CHAPTERS.length === 0) {
+        container.innerHTML = "No Task For Today";
+        return;
+    }
+    
+    for (let chapter of CHAPTERS) {
+        
+        
+        if (chapter.date === _Date_format) {
+
+            let chapterTask = document.createElement("div");
+            chapterTask.classList.add("TaskInfo");
+
+            chapterTask.innerHTML = `${chapter.ForCourse} - ${chapter.name}`;
+
+            let checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+
+            if (chapter.State === "Completed") {
+                checkbox.checked = true;
+            }
+
+            checkbox.addEventListener("change", function () {
+                let course = COURSES.find(co => 
+                    co.name === chapter.ForCourse && 
+                    co.schedule_Name === chapter.ForSchedule
+                );
+                
+
+                if (checkbox.checked) {
+                    chapter.State="Completed"
+                    if(course.Number_Of_Completed_Chapters !== course.Number_Of_Chapters) course.Number_Of_Completed_Chapters++
+                    if(course.Number_Of_Completed_Chapters === course.Number_Of_Chapters){
+                        course.State = "Completed"
+                        SCHEDULE.completion_Bar++
+                    }    
+                } else {
+                    chapter.State="Not Completed"
+                    if(course.Number_Of_Completed_Chapters!==0) course.Number_Of_Completed_Chapters--
+                    if(course.State=== "Completed"){
+                        course.State = " Not Completed"
+                        SCHEDULE.completion_Bar--
+                    }
+                }
+                
+
+            });
+
+            chapterTask.appendChild(checkbox);
+            container.appendChild(chapterTask);
+        }
+    }
+    if(container.innerHTML === "")container.innerHTML="No Tasks For Today"
+}
 
 
+function saveChanges(){
 
+    CHAPTERS.forEach(chapter =>{
+        window.api.updateChapter({
+            chapter : chapter
+        })
+    })
 
+    COURSES.forEach(course =>{
+        window.api.updateCourse({
+            course : course
+        })
+    })
+
+    window.api.updateSchedule({
+        schedule : SCHEDULE
+    });
+
+    window.location.href="Home.html"
+}
 

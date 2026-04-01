@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="Create_Schedule.css">
+    <link rel="stylesheet" href="View.css">
     <title>Document</title>
 </head>
 <body>
@@ -30,8 +30,22 @@
         <input type="date"id="End_Date"> -->
 
         <!-- <button class="Create_Schedule" onclick="navigator()">Create Schedule</button> -->
+
+        <div class="Tasks">
+          <div class="TaskInfo">
+            Course 1 - Chapter 1
+            <input type="checkbox">
+          </div>
+
+          <div class="TaskInfo">
+            Course 1 - Chapter 1
+            <input type="checkbox" >
+          </div>
+        </div>
+        <div>
         <a href="Home.html"><button class="Go_Back" >Exit</button></a>
-    
+        <button class="Go_Back"  onclick="saveChanges()"> Save Changes</button>
+        </div>
     
     </div>
     <!-- <div class="Course_Info">
@@ -75,6 +89,10 @@
 
   </div>
 </div> -->
+
+<div id="tooltip">
+  
+</div>
 </body>
 <script defer src="View.js"></script>
 </html>

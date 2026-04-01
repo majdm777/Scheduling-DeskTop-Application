@@ -60,6 +60,7 @@ body {
   overflow-y: scroll;
 }
 
+
 .schedule td {
   border: 1px solid rgba(255,255,255,0.2);
 }
@@ -74,6 +75,24 @@ body {
   flex-direction: column;
   gap: 15px;
   backdrop-filter: blur(10px);
+}
+.Tasks{
+    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    min-height: 150px;
+    min-width: 100px;
+    background-color: #1e1e2f;
+    border-color:black ;
+    justify-content: center;
+    padding: 10px;
+}
+.TaskInfo{
+    color: #ffffff;
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
 }
 .Course_Info{
   width: 80%;
@@ -116,7 +135,7 @@ body {
   padding: 12px;
   border: none;
   border-radius: 10px;
-  background:transparent;
+  background:#ff5a5f;
   color: white;
   cursor: pointer;
   transition: 0.3s;
@@ -248,6 +267,19 @@ td.active {
  }
 .Chapter_Cancel_Button:hover{
   color: #e14b50;
+}
+#tooltip {
+    position: fixed;
+    background: #2e8a2e;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    pointer-events: none; /* important */
+    display: none;
+    z-index: 1000;
+    align-items: center;
+    max-width: 200px;
 }
 
 /* RESPONSIVE */

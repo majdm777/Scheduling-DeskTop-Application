@@ -100,7 +100,7 @@ ipcMain.on('save-course', (event, data) => {
       `INSERT INTO courses 
       (name, schedule_Name, Number_Of_Chapters, Number_Of_Completed_Chapters, State) 
       VALUES (?, ?, ?, ?, ?)`,
-      [name, schedule_Name, number_of_chapters, 0, "Not-Completed"],
+      [name, schedule_Name, number_of_chapters, 0, "Not Completed"],
       (err) => {
           if (err) console.log(err);
           else console.log("✅ Course saved");
@@ -115,7 +115,7 @@ ipcMain.on('save-chapter', (event, data) => {
         `INSERT INTO chapters 
         (name, date, ForSchedule, ForCourse, State) 
         VALUES (?, ?, ?, ?, ?)`,
-        [name, date, ForSchedule, ForCourse, "Not-Completed"],
+        [name, date, ForSchedule, ForCourse, "Not Completed"],
         (err) => {
             if (err) console.log(err);
             else console.log("✅ Chapter saved");
@@ -175,4 +175,51 @@ ipcMain.handle('get-assigned-chapters',async (event,data)=>{
     });
   });
 })
+
+
+/// update database onsave
+
+
+ipcMain.on('update-chapters', async (event,data) =>{
+  const chapter = data.chapter
+ 
+     db.run(
+        `UPDATE chapters SET State= ? WHERE id = ?`,
+        [chapter.State,chapter.id],
+        (err) => {
+            if (err) console.log(err);
+            else console.log("✅ Chapter Updated");
+        }
+    ); 
+})
+
+ipcMain.on('update-courses', async (event,data) =>{
+  const course = data.course
+ 
+     db.run(
+        `UPDATE courses SET State= ?, Number_Of_Completed_Chapters = ? WHERE id =?`,
+        [course.State,course.Number_Of_Completed_Chapters,course.id],
+        (err) => {
+            if (err) console.log(err);
+            else console.log("✅ Course Updated");
+        }
+    ); 
+})
+
+ipcMain.on('update-schedule', async (event,data) =>{
+  const schedule = data.schedule
+ 
+     db.run(
+        `UPDATE schedules SET State= ? , completion_Bar = ? WHERE name = ?`,
+        [schedule.State,schedule.completion_Bar,schedule.name],
+        (err) => {
+            if (err) console.log(err +1);
+            else console.log("✅ schedule Updated");
+        }
+    ); 
+})
+
+
+
+
 

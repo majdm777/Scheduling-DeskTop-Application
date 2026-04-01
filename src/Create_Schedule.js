@@ -414,10 +414,13 @@ window.api.onScheduleSaved((event, res) => {
             ForSchedule: SCHEDULE_NAME,
             ForCourse: ch.forCourse
         });
-    });
-    // window.location.href="Home.html";
+});
+    window.location.href="Home.html";
     console.log("✅ ALL SAVED");
 });
+
+
+    
 }
 
 
