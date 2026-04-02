@@ -15,7 +15,7 @@ async function loadSchedules() {
 
 function displaySchedule(schedules){
     let Container = document.querySelector(".Current_Active_Schedules");
-    Container.innerHTML = "";
+    // Container.innerHTML = '';
 
     for (let element of schedules) {
 
@@ -77,7 +77,24 @@ function displaySchedule(schedules){
             loadSchedules();
         });
 
-        newSchedule.appendChild(deleteButton);
+
+        let City= document.createElement("button");
+        City.classList.add("deleteButton");
+        City.textContent = " View City";
+
+        City.addEventListener("click", function(e){
+            e.stopPropagation(); // 🔥
+            window.location.href = `City.html?name=${encodeURIComponent(element.name)}`
+        });
+
+        let rowButton=document.createElement("div")
+        rowButton.classList.add("rowButton")
+        rowButton.appendChild(deleteButton)
+        rowButton.appendChild(City)
+
+        newSchedule.appendChild(rowButton);
+        
+
         Container.appendChild(newSchedule);
 
 

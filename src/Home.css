@@ -129,6 +129,14 @@ body {
   text-align: center;
   opacity: 90%;
 }
+
+.rowButton{
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-between;
+  
+}
 /* RESPONSIVE */
 @media (max-width: 600px) {
   .Navigation_bar {

@@ -1,0 +1,130 @@
+body {
+  background: #87ceeb;
+  font-family: Arial;
+  text-align: center;
+}
+
+/* perspective */
+.city {
+  perspective: 1000px;
+  margin-top: 50px;
+}
+
+/* grid */
+#grid {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), 120px);
+  gap: 0;
+  justify-content: center;
+  transform: rotateX(45deg);
+}
+
+/* TILE */
+.tile {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  transform-style: preserve-3d;
+}
+
+/* top */
+.tile .top {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #4caf50;
+  transform: translateZ(20px);
+  border: 1px solid #2e7d32;
+}
+
+/* side */
+.tile .side {
+  position: absolute;
+  width: 100%;
+  height: 20px;
+  background: #2e7d32;
+  bottom: 0;
+  transform: rotateX(90deg);
+  transform-origin: bottom;
+}
+
+/* ===== ROADS ===== */
+.road {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: translateZ(21px);
+  pointer-events: none;
+}
+
+/* center */
+.road::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #444;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* connections */
+.road span {
+  position: absolute;
+  background: #444;
+}
+
+/* directions */
+.road .top {
+  width: 20px;
+  height: 50%;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.road .bottom {
+  width: 20px;
+  height: 50%;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.road .left {
+  height: 20px;
+  width: 50%;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.road .right {
+  height: 20px;
+  width: 50%;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* ===== BUILDING IMAGE (3D effect) ===== */
+.building-img {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+
+  top: 12px;
+  left: 12px;
+
+  transform: translateZ(30px) rotateX(-20deg) rotateY(10deg);
+  transform-origin: bottom center;
+
+  filter: drop-shadow(0 10px 5px rgba(0,0,0,0.4));
+  transition: transform 0.2s;
+}
+
+.tile:hover .building-img {
+  transform: translateZ(35px) rotateX(-15deg) rotateY(10deg) scale(1.05);
+}
