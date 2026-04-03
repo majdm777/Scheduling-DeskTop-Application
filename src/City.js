@@ -102,6 +102,8 @@ function generateHouse_ForEachCourse() {
 
     let chapters = course.Number_Of_Chapters;
     let image = "";
+    let Type = ''
+    
 
     const now = new Date();
     const start = new Date(SCHEDULE.start_date);
@@ -116,42 +118,50 @@ function generateHouse_ForEachCourse() {
 
       if (chapters <= 2) {
         image = getLevel(HouseSmall, dayIndex);
+        Type="HouseSmall";
       } 
       else if (chapters <= 4) {
         image = getLevel(HouseSmallX, dayIndex);
+        Type="HouseSmall+";
       } 
       else if (chapters <= 6) {
         image = getLevel(HouseMedium, dayIndex);
+        Type="HouseMedium";
       } 
       else if (chapters <= 8) {
         image = getLevel(HouseMediumX, dayIndex);
+        Type="HouseMedium+";
       } 
       else if (chapters <= 10) {
         image = getLevel(HouseLarge, dayIndex);
+        Type="HouseLarge";
       } 
       else if (chapters <= 12) {
         image = getLevel(HouseLargeX, dayIndex);
+        Type="HouseLarge+";
       } 
       else {
         image = getLevel(HouseLargeExtra, dayIndex);
+        Type="HouseLargeExtra";
       }
 
     }
     else {
       // finished → final stage
-      if (chapters <= 2) image = HouseSmall.at(-1);
-      else if (chapters <= 4) image = HouseSmallX.at(-1);
-      else if (chapters <= 6) image = HouseMedium.at(-1);
-      else if (chapters <= 8) image = HouseMediumX.at(-1);
-      else if (chapters <= 10) image = HouseLarge.at(-1);
-      else if (chapters <= 12) image = HouseLargeX.at(-1);
-      else image = HouseLargeExtra.at(-1);
+      if (chapters <= 2){ image = HouseSmall.at(-1);  Type="HouseSmall";}
+      else if (chapters <= 4){ image = HouseSmallX.at(-1);  Type="HouseSmall+";}
+      else if (chapters <= 6){ image = HouseMedium.at(-1); Type="HouseMedium";}
+      else if (chapters <= 8){ image = HouseMediumX.at(-1); Type="HouseMedium+";}
+      else if (chapters <= 10){ image = HouseLarge.at(-1); Type="HouseLarge";}
+      else if (chapters <= 12){ image = HouseLargeX.at(-1); Type="HouseLarge+";}
+      else{ image = HouseLargeExtra.at(-1); Type="HouseLargeExtra";}
     }
 
 
 
     cityData[index] = {
-      type: "house",
+      course: course,
+      type: Type,
       image: image
     };
   }
@@ -162,9 +172,43 @@ function generateHouse_ForEachCourse() {
 function createGrid() {
   grid.style.gridTemplateColumns =`repeat(${size},120px)`
   for (let i = 0; i <size*size; i++) {
-      const tile = createTile(cityData[i], i);
-      tiles.push(tile);
-      grid.appendChild(tile);
+    const tile = createTile(cityData[i], i);
+    tile.addEventListener("mousemove", function (e) {
+        let tooltip = document.getElementById("tooltip");
+        if (!cityData[i]) {
+            // tooltip.style.display = "none";  // optional
+            tooltip.style.left = (e.clientX + 15) + "px";
+            tooltip.style.top = (e.clientY + 15) + "px";
+            tooltip.style.display = "block";
+
+            tooltip.innerHTML=`<h3 style=" color:black">No Tasks For Today</h3>` 
+            return;
+        }
+        let chapter =[]
+        for(let chap of CHAPTERS){
+          if(chap.ForCourse === cityData[i].course){
+            chapter.push(chap);
+          }
+        }
+
+        // build content
+        tooltip.innerHTML =`<h1 style="color:black">Today's Task</h1><br>`+ chapter
+        .map(ch => `${ch.name} - ${ch.name} - ${ch.State}`)
+        .join("<br>");
+
+        // position near cursor
+        tooltip.style.left = (e.clientX + 15) + "px";
+        tooltip.style.top = (e.clientY + 15) + "px";
+
+        tooltip.style.display = "block";
+    });
+
+    tile.addEventListener("mouseleave", function () {
+        document.getElementById("tooltip").style.display = "none";
+    });  
+    tiles.push(tile);
+
+    grid.appendChild(tile);
   }
 
   updateRoads();
@@ -189,7 +233,7 @@ function createTile(data, index) {
   tile.appendChild(road);
 
   /* render building from data */
-  if (data && data.type === "house") {
+  if (data && data.type) {
     const img = document.createElement("img");
     img.src = data.image;
     img.classList.add("building-img");

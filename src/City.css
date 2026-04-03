@@ -128,3 +128,17 @@ body {
 .tile:hover .building-img {
   transform: translateZ(35px) rotateX(-15deg) rotateY(10deg) scale(1.05);
 }
+
+#tooltip {
+    position: fixed;
+    background: #2e8a2e;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    pointer-events: none; /* important */
+    display: none;
+    z-index: 1000;
+    align-items: center;
+    max-width: 200px;
+}
