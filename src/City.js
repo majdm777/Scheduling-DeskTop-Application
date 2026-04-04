@@ -3,9 +3,9 @@ let HouseSmall=["building_icons/Base_0.png","building_icons/Building_Level_1_Sma
 let HouseSmallX=["building_icons/Base_0.png","building_icons/Building_Level_1_Small.png","building_icons/Building_Level_2_Small.png","building_icons/Final_House_Small+.png"]
 let HouseMedium =["building_icons/Base_0.png","building_icons/Building_Level_1_Medium.png","building_icons/Building_Level_2_Medium.png","Building_Level_3_Medium.png","building_icons/Final_House_Medium.png"]
 let HouseMediumX =["building_icons/Base_0.png","building_icons/Building_Level_1_Medium.png","building_icons/Building_Level_2_Medium.png","Building_Level_3_Medium.png","building_icons/Final_House_Medium+.png"]
-let HouseLarge=["building_icons/Base_0.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","Building_Level_3_Large.png","Building_Level_4_Large.png","Building_Level_5_Large.png","building_icons/Final_House_Large.png"]
-let HouseLargeX=["building_icons/Base_0.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","Building_Level_3_Large.png","Building_Level_4_Large.png","Building_Level_5_Large.png","building_icons/Final_House_Large+.png"]
-let HouseLargeExtra=["building_icons/Base_extra.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","Building_Level_3_Large.png","Building_Level_4_Large.png","Building_Level_5_Large.png","building_icons/Final_House_Extra_Large.png"]
+let HouseLarge=["building_icons/Base_0.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","building_icons/Building_Level_3_Large.png","building_icons/Building_Level_4_Large.png","building_icons/Building_Level_5_Large.png","building_icons/Final_House_Large.png"]
+let HouseLargeX=["building_icons/Base_0.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","building_icons/Building_Level_3_Large.png","building_icons/Building_Level_4_Large.png","building_icons/Building_Level_5_Large.png","building_icons/Final_House_Large+.png"]
+let HouseLargeExtra=["building_icons/Base_extra.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","building_icons/Building_Level_3_Large.png","building_icons/Building_Level_4_Large.png","building_icons/Building_Level_5_Large.png","building_icons/Final_House_Extra_Large.png"]
 
 
 
@@ -173,38 +173,47 @@ function createGrid() {
   grid.style.gridTemplateColumns =`repeat(${size},120px)`
   for (let i = 0; i <size*size; i++) {
     const tile = createTile(cityData[i], i);
-    tile.addEventListener("mousemove", function (e) {
-        let tooltip = document.getElementById("tooltip");
-        if (!cityData[i]) {
-            // tooltip.style.display = "none";  // optional
-            tooltip.style.left = (e.clientX + 15) + "px";
-            tooltip.style.top = (e.clientY + 15) + "px";
-            tooltip.style.display = "block";
 
-            tooltip.innerHTML=`<h3 style=" color:black">No Tasks For Today</h3>` 
-            return;
-        }
-        let chapter =[]
-        for(let chap of CHAPTERS){
-          if(chap.ForCourse === cityData[i].course){
-            chapter.push(chap);
-          }
-        }
 
-        // build content
-        tooltip.innerHTML =`<h1 style="color:black">Today's Task</h1><br>`+ chapter
-        .map(ch => `${ch.name} - ${ch.name} - ${ch.State}`)
-        .join("<br>");
+  let animationInterval;
 
-        // position near cursor
-        tooltip.style.left = (e.clientX + 15) + "px";
-        tooltip.style.top = (e.clientY + 15) + "px";
+  tile.addEventListener("mousemove", function (e) {
+    let tooltip = document.getElementById("tooltip");
 
-        tooltip.style.display = "block";
-    });
+    tooltip.style.left = (e.clientX + 15) + "px";
+    tooltip.style.top = (e.clientY + 15) + "px";
+    tooltip.style.display = "block";
+
+    if (!cityData[i]) {
+        tooltip.innerHTML = `<h3 style="color:black">No Tasks For Today</h3>`;
+        return;
+    }
+
+    let chapter = CHAPTERS
+        .filter(chap => chap.ForCourse === cityData[i].course.name);
+
+    let houseLifeTime = getHouseDesignArray(cityData[i].course.Number_Of_Chapters);
+
+    let index = 0;
+
+    clearInterval(animationInterval); // stop previous animation
+
+    tooltip.innerHTML = `
+        <img id="tooltipImg" class="tooltipImage" src="${houseLifeTime[0]}">
+        <h3>${cityData[i].course.name}</h3>
+        ${chapter.map(c => `${c.name} - ${c.State}`).join("<br>")}
+    `;
+
+    animationInterval = setInterval(() => {
+        index = (index +1) % houseLifeTime.length;
+
+        document.getElementById("tooltipImg").src = houseLifeTime[index];
+    }, 500); // speed (ms)
+  });
 
     tile.addEventListener("mouseleave", function () {
         document.getElementById("tooltip").style.display = "none";
+        clearInterval(animationInterval);
     });  
     tiles.push(tile);
 
@@ -289,4 +298,16 @@ function getDayIndex(startDate) {
   start.setHours(0,0,0,0);
 
   return Math.floor((now - start) / (1000 * 60 * 60 * 24));
+}
+
+
+function getHouseDesignArray( numberOfChapters){
+
+      if (numberOfChapters <= 2){ return HouseSmall}
+      else if (numberOfChapters <= 4){ return HouseSmallX}
+      else if (numberOfChapters <= 6){ return HouseMedium}
+      else if (numberOfChapters <= 8){ return HouseMediumX}
+      else if (numberOfChapters <= 10){ return HouseLarge}
+      else if (numberOfChapters <= 12){ return HouseLargeX}
+      else{ return HouseLargeExtra}
 }

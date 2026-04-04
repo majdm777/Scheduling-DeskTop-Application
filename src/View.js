@@ -43,6 +43,7 @@ loadInfo().then(result => {
     
 
     if(!updateData()) alert("Failed To Update The Date");
+    updateData();
 
     LoadTable()
     addcourse()

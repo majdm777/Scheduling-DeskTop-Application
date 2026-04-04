@@ -131,7 +131,7 @@ body {
 
 #tooltip {
     position: fixed;
-    background: #2e8a2e;
+    background: #202f4b;
     color: white;
     padding: 8px 12px;
     border-radius: 8px;
@@ -141,4 +141,13 @@ body {
     z-index: 1000;
     align-items: center;
     max-width: 200px;
+}
+.tooltipImage{
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+
+}
+.tooltipInfo{
+
 }
