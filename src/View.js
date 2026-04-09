@@ -66,7 +66,7 @@ function updateData(){
         }
 
     }
-
+    saveChanges()
     return true
 }
 
@@ -323,6 +323,10 @@ function saveChanges(){
         schedule : SCHEDULE
     });
 
+    
+}
+function returnHome(){
+    saveChanges()
     window.location.href="Home.html"
 }
 

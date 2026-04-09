@@ -211,11 +211,16 @@ td.active {
     height: 100%;
 
     background: rgba(0,0,0,0.5);
+    overflow-y: scroll;
 
     display: none;
     justify-content: center;
     align-items: center;
 }
+.popup::-webkit-scrollbar{
+  display: none;
+}
+
 
 .popup-content {
     background: white;

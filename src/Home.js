@@ -15,7 +15,7 @@ async function loadSchedules() {
 
 function displaySchedule(schedules){
     let Container = document.querySelector(".Current_Active_Schedules");
-    // Container.innerHTML = '';
+    Container.innerHTML = '';
 
     for (let element of schedules) {
 
@@ -74,7 +74,7 @@ function displaySchedule(schedules){
             window.api.deleteSchedule({
                 schedule_name: element.name
             });
-            loadSchedules();
+            loadSchedules()
         });
 
 

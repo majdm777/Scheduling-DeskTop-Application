@@ -184,8 +184,8 @@ ipcMain.on('update-chapters', async (event,data) =>{
   const chapter = data.chapter
  
      db.run(
-        `UPDATE chapters SET State= ? WHERE id = ?`,
-        [chapter.State,chapter.id],
+        `UPDATE chapters SET State= ? , date = ? WHERE id = ?`,
+        [chapter.State,chapter.date,chapter.id],
         (err) => {
             if (err) console.log(err);
             else console.log("✅ Chapter Updated");
@@ -219,6 +219,19 @@ ipcMain.on('update-schedule', async (event,data) =>{
     ); 
 })
 
+
+ipcMain.on('update-assigned-chapters', async (event,data) =>{
+  const asCH = data.assigned_chapter;
+ 
+     db.run(
+        `UPDATE Assigned_Chapters SET Count= ? WHERE Schedule_Name = ? AND DATE =? `,
+        [asCH.Count,asCH.Schedule_Name,asCH.DATE],
+        (err) => {
+            if (err) console.log(err );
+            else console.log("✅ assdigned chapters Updated");
+        }
+    ); 
+})
 
 //DELETE
 ipcMain.on('delete-schedule',async (event,data) => {

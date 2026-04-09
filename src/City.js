@@ -1,13 +1,14 @@
 // array of strings contains images path for each lvl
 let HouseSmall=["building_icons/Base_0.png","building_icons/Building_Level_1_Small.png","building_icons/Building_Level_2_Small.png","building_icons/Final_House_Small.png"]
 let HouseSmallX=["building_icons/Base_0.png","building_icons/Building_Level_1_Small.png","building_icons/Building_Level_2_Small.png","building_icons/Final_House_Small+.png"]
-let HouseMedium =["building_icons/Base_0.png","building_icons/Building_Level_1_Medium.png","building_icons/Building_Level_2_Medium.png","Building_Level_3_Medium.png","building_icons/Final_House_Medium.png"]
-let HouseMediumX =["building_icons/Base_0.png","building_icons/Building_Level_1_Medium.png","building_icons/Building_Level_2_Medium.png","Building_Level_3_Medium.png","building_icons/Final_House_Medium+.png"]
+let HouseMedium =["building_icons/Base_0.png","building_icons/Building_Level_1_Medium.png","building_icons/Building_Level_2_Medium.png","building_icons/Building_Level_3_Medium.png","building_icons/Final_House_Medium.png"]
+let HouseMediumX =["building_icons/Base_0.png","building_icons/Building_Level_1_Medium.png","building_icons/Building_Level_2_Medium.png","building_icons/Building_Level_3_Medium.png","building_icons/Final_House_Medium+.png"]
 let HouseLarge=["building_icons/Base_0.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","building_icons/Building_Level_3_Large.png","building_icons/Building_Level_4_Large.png","building_icons/Building_Level_5_Large.png","building_icons/Final_House_Large.png"]
 let HouseLargeX=["building_icons/Base_0.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","building_icons/Building_Level_3_Large.png","building_icons/Building_Level_4_Large.png","building_icons/Building_Level_5_Large.png","building_icons/Final_House_Large+.png"]
 let HouseLargeExtra=["building_icons/Base_extra.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","building_icons/Building_Level_3_Large.png","building_icons/Building_Level_4_Large.png","building_icons/Building_Level_5_Large.png","building_icons/Final_House_Extra_Large.png"]
 
-
+let MainBuilding=["building_icons/MainBuilding_Bank.png","building_icons/MainBuilding_Hospital.png","building_icons/MainBuilding_Factory.png","building_icons/MainBuilding_Business.png","building_icons/MainBuilding_School.png","building_icons/MainBuilding_Restaurant.png"]
+let Accessories=["building_icons/Acc_tree.png","building_icons/Acc_people-1.png","building_icons/Acc_car-1.png","building_icons/Acc_car-2.png","building_icons/Acc_car-3.png"]
 
 
 
@@ -43,6 +44,7 @@ async function loadInfo() {
     ASSIGNED_CHAPTERS = await window.api.getAssignedChapters(SCHEDULE_NAME);
     DEFAULT_DATE =SCHEDULE.start_date;
     NUMBER_OF_DAYS = ASSIGNED_CHAPTERS.length;
+    document.querySelector("#City_Name").innerHTML=`${SCHEDULE_NAME}'s City`
 
     console.log(SCHEDULE)
     console.log(COURSES)
@@ -53,7 +55,7 @@ async function loadInfo() {
 
 
 
-    size =Math.ceil(NUMBER_OF_DAYS/2);;
+    size =Math.ceil(Math.sqrt(NUMBER_OF_DAYS)*1.2);
 
     IfElse_Counter += 2;
     return true ;
@@ -81,14 +83,14 @@ const grid = document.getElementById("grid");
 
 
 let cityData = [];
-
+let usedIndexes = new Set();
 function generateHouse_ForEachCourse() {
   const totalTiles = size * size;
 
   // create empty grid
   cityData = new Array(totalTiles).fill(null);
 
-  let usedIndexes = new Set();
+  
 
   for (let course of COURSES) {
 
@@ -165,6 +167,137 @@ function generateHouse_ForEachCourse() {
       image: image
     };
   }
+  generateDefaultBuildings()
+}
+
+function generateDefaultBuildings() {
+
+  const totalTiles = size * size;
+
+  let availableSpace = totalTiles - COURSES.length;
+  if (availableSpace <= 0) return;
+
+  let spaceForMainBuilding = Math.ceil(availableSpace / 2);
+  let spaceForAccessories = availableSpace - spaceForMainBuilding;
+
+  let number_of_MainBuilding = Math.ceil(COURSES.length/2);
+  let number_Of_Accessories = Math.floor(number_of_MainBuilding/2);
+
+
+  /* ===== MAIN BUILDINGS ===== */
+  for (let i = 0; i < number_of_MainBuilding; i++) {
+
+
+
+
+    if (i >= MainBuilding.length) break;
+
+    let index;
+    do {
+      index = Math.floor(Math.random() * totalTiles);
+    } while (usedIndexes.has(index));
+    usedIndexes.add(index);
+
+    switch(i){
+      case 0 :{
+        cityData[index] = {
+          course:"Done",
+          type:"Bank",
+          image: MainBuilding[i]
+        };
+        break;
+      }
+
+      case 1:{
+        cityData[index] = {
+          course: "Done",
+          type: "Hospital",
+          image: MainBuilding[i]
+        };
+        break;        
+      }
+
+      case 2:{
+        cityData[index] = {
+          course: null,
+          type: "Factory",
+          image: MainBuilding[i]
+        };
+        break;       
+      }
+
+      case 3:{
+        cityData[index] = {
+        course: null,
+        type: "Business",
+        image: MainBuilding[i]
+        }; 
+        break;
+      }
+
+      default : break;
+    }
+
+    
+
+
+  }
+
+  /* ===== ACCESSORIES ===== */
+  for (let i = 0; i < number_Of_Accessories; i++) {
+
+    if (i >= Accessories.length) break;
+
+    let index;
+    do {
+      index = Math.floor(Math.random() * totalTiles);
+    } while (usedIndexes.has(index));
+    usedIndexes.add(index);
+
+    switch(i){
+      case 0 :{
+        cityData[index] = {
+          course: null,
+          type: "Accessories",
+          image: Accessories[i]
+        };
+      }
+
+      case 1:{
+        cityData[index] = {
+          course: null,
+          type: "Accessories",
+          image: Accessories[i]
+        };        
+      }
+
+      case 2:{
+        cityData[index] = {
+          course: null,
+          type: "Accessories",
+          image: Accessories[i]
+        };       
+      }
+
+      case 3:{
+        cityData[index] = {
+        course: null,
+        type: "Accessories",
+        image: Accessories[i]
+        }; 
+      }
+
+      case 4:{
+        cityData[index] = {
+        course: null,
+        type: "Accessories",
+        image: Accessories[i]
+        }; 
+      }
+
+      default : break;
+    }
+  }
 }
 // 
 
@@ -175,20 +308,66 @@ function createGrid() {
     const tile = createTile(cityData[i], i);
 
 
-  let animationInterval;
+    let animationInterval;
+    if (cityData[i] && cityData[i].type === "Hospital") {
+      tile.addEventListener("click", () => openHospital());
+    }
 
   tile.addEventListener("mousemove", function (e) {
     let tooltip = document.getElementById("tooltip");
 
-    tooltip.style.left = (e.clientX + 15) + "px";
-    tooltip.style.top = (e.clientY + 15) + "px";
+    positionTooltip(e, tooltip);
     tooltip.style.display = "block";
 
-    if (!cityData[i]) {
-        tooltip.innerHTML = `<h3 style="color:black">No Tasks For Today</h3>`;
-        return;
+    if (!cityData[i] || cityData[i].course === null) {
+      tooltip.innerHTML = `<h3 style="color:black"> ...                 </h3>`;
+      return;
+    }
+    
+    if(cityData[i].type === "Bank"){
+      let nb_MissedChap=0;
+      let nb_CompletedChap=0;
+      let nb_NotCompletedChap=0;
+      for(chap of CHAPTERS){
+        if(chap.State === "Chapter Missed"){
+          nb_MissedChap++
+        }else if(chap.State==="Completed"){
+          nb_CompletedChap++
+        }else if(chap.State==="Not Completed"){
+          nb_NotCompletedChap++
+        }
+      }
+
+      tooltip.innerHTML = `<img id="tooltipImg" class="tooltipImage" src="${cityData[i].image}">
+                          <br><h3>Bank</h3>
+                          <hr>
+                          <h4>Number of Completed Chapters is : ${nb_CompletedChap}</h4>
+                          <hr>
+                          <h4>Number of Not-Completed Chapters is : ${nb_NotCompletedChap}</h4>
+                          <hr>
+                          <h4>Number of Missed Chapters is : ${nb_MissedChap}</h4>
+                          <hr>                                                    
+                          `;
+      return;           
+    }
+    if(cityData[i].type === "Hospital"){
+        tooltip.innerHTML = `
+                        <img class="tooltipImage" src="${cityData[i].image}">
+                        <h3>Hospital</h3>
+                        <hr>
+                        <p>Here you can revive your Missed Chapter</p>
+                        <p>by rescheduling them to the current day
+                        </p>
+                      `;
+                      
+      return;       
     }
 
+
+    if(cityData[i].type === "Accessories"){
+      tooltip.innerHTML = `<h3 style="color:black"> ...                 </h3>`;
+      return;      
+    }    
     let chapter = CHAPTERS
         .filter(chap => chap.ForCourse === cityData[i].course.name);
 
@@ -218,6 +397,7 @@ function createGrid() {
     tiles.push(tile);
 
     grid.appendChild(tile);
+
   }
 
   updateRoads();
@@ -310,4 +490,139 @@ function getHouseDesignArray( numberOfChapters){
       else if (numberOfChapters <= 10){ return HouseLarge}
       else if (numberOfChapters <= 12){ return HouseLargeX}
       else{ return HouseLargeExtra}
+}
+
+
+function positionTooltip(e, tooltip) {
+  const offset = 15;
+
+  const tooltipWidth = tooltip.offsetWidth;
+  const tooltipHeight = tooltip.offsetHeight;
+
+  const screenWidth = window.innerWidth;
+  const screenHeight = window.innerHeight;
+
+  let x = e.clientX + offset;
+  let y = e.clientY + offset;
+
+  
+  if (x + tooltipWidth > screenWidth) {
+    x = e.clientX - tooltipWidth - offset;
+  }
+
+  
+  if (y + tooltipHeight > screenHeight) {
+    y = e.clientY - tooltipHeight - offset;
+  }
+
+  tooltip.style.left = x + "px";
+  tooltip.style.top = y + "px";
+}
+
+
+function openPopup() {
+    document.getElementById("popup").style.display = "flex";
+}
+
+function closePopup() {
+
+    document.getElementById("popup").style.display = "none";
+}
+
+function openHospital() {
+
+  let container = document.querySelector("#chaptersContainer");
+  container.innerHTML = "";
+
+  const missed = CHAPTERS.filter(chap => chap.State === "Chapter Missed");
+
+  if (missed.length === 0) {
+    container.innerHTML = `<p style="text-align:center;">✅ No missed chapters</p>`;
+    openPopup();
+    return;
+  }
+
+  missed.forEach(chap => {
+
+    const card = document.createElement("div");
+    card.classList.add("chapter-card");
+
+    const title = document.createElement("h3");
+    title.classList.add("chapter-title");
+    title.innerText = `${chap.ForCourse} - ${chap.name}`;
+
+    const status = document.createElement("span");
+    status.classList.add("chapter-status");
+    status.innerText = "MISSED";
+
+    const btn = document.createElement("button");
+    btn.classList.add("recover-btn");
+    btn.innerText = "Recover";
+
+    btn.addEventListener("click", () => {
+      let currentDate = new Date();
+      currentDate.setHours(0,0,0,0);
+
+      chap.date = currentDate.toISOString().split("T")[0];
+      chap.State = "Rescheduled";
+
+      let newAssign = ASSIGNED_CHAPTERS.find(
+        cha => cha.DATE === chap.date && cha.Schedule_Name === SCHEDULE_NAME
+      );
+      if (newAssign) newAssign.Count++;
+
+      // 🎬 trigger animation
+      card.classList.add("recovered");
+
+      // disable button
+      btn.disabled = true;
+
+      // 🧼 remove after animation
+      setTimeout(() => {
+        card.remove();
+      }, 500);
+    });
+
+    card.appendChild(title);
+    card.appendChild(status);
+    card.appendChild(btn);
+
+    container.appendChild(card);
+  });
+
+  openPopup();
+}
+
+
+function saveChanges(){
+
+  CHAPTERS.forEach(chapter =>{
+      window.api.updateChapter({
+          chapter : chapter
+      })
+  })
+
+  COURSES.forEach(course =>{
+      window.api.updateCourse({
+          course : course
+      })
+  })
+
+  window.api.updateSchedule({
+      schedule : SCHEDULE
+  });
+
+  ASSIGNED_CHAPTERS.forEach(assigned =>{
+    window.api.UpdateAssignedChapters({
+      assigned_chapter : assigned
+    });
+  })
+
+
+  closePopup()
+
+  console.log(SCHEDULE)
+  console.log(COURSES)
+  console.log(CHAPTERS)
+  console.log(ASSIGNED_CHAPTERS)
 }
