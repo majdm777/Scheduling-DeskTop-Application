@@ -286,7 +286,7 @@ function loadTodaysTask(){
                     chapter.State="Not Completed"
                     if(course.Number_Of_Completed_Chapters!==0) course.Number_Of_Completed_Chapters--
                     if(course.State=== "Completed"){
-                        course.State = " Not Completed"
+                        course.State = "Not Completed"
                         
                     }
 

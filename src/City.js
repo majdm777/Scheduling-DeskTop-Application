@@ -7,7 +7,7 @@ let HouseLarge=["building_icons/Base_0.png","building_icons/Building_Level_1_Lar
 let HouseLargeX=["building_icons/Base_0.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","building_icons/Building_Level_3_Large.png","building_icons/Building_Level_4_Large.png","building_icons/Building_Level_5_Large.png","building_icons/Final_House_Large+.png"]
 let HouseLargeExtra=["building_icons/Base_extra.png","building_icons/Building_Level_1_Large.png","building_icons/Building_Level_2_Large.png","building_icons/Building_Level_3_Large.png","building_icons/Building_Level_4_Large.png","building_icons/Building_Level_5_Large.png","building_icons/Final_House_Extra_Large.png"]
 
-let MainBuilding=["building_icons/MainBuilding_Bank.png","building_icons/MainBuilding_Hospital.png","building_icons/MainBuilding_Factory.png","building_icons/MainBuilding_Business.png","building_icons/MainBuilding_School.png","building_icons/MainBuilding_Restaurant.png"]
+let MainBuilding=["building_icons/MainBuilding_Bank.png","building_icons/MainBuilding_Hospital.png","building_icons/MainBuilding_Business.png","building_icons/MainBuilding_School.png","building_icons/MainBuilding_Factoy.png","building_icons/MainBuilding_Restaurant.png","building_icons/MainBuilding_TownHall.png"]
 let Accessories=["building_icons/Acc_tree.png","building_icons/Acc_people-1.png","building_icons/Acc_car-1.png","building_icons/Acc_car-2.png","building_icons/Acc_car-3.png"]
 
 
@@ -23,6 +23,10 @@ let ASSIGNED_CHAPTERS=[];
 let SCHEDULE=[];
 let DEFAULT_DATE;
 let NUMBER_OF_DAYS;
+let COINS=0;
+
+
+let LIRA = 1.2;
 
 let IfElse_Counter=0;
 
@@ -50,6 +54,7 @@ async function loadInfo() {
     console.log(COURSES)
     console.log(CHAPTERS)
     console.log(ASSIGNED_CHAPTERS)
+    COINS =updateCoin();
 
     
 
@@ -219,8 +224,8 @@ function generateDefaultBuildings() {
 
       case 2:{
         cityData[index] = {
-          course: null,
-          type: "Factory",
+          course: "done",
+          type: "Business",
           image: MainBuilding[i]
         };
         break;       
@@ -228,12 +233,21 @@ function generateDefaultBuildings() {
 
       case 3:{
         cityData[index] = {
-        course: null,
-        type: "Business",
+        course: "done",
+        type: "School",
         image: MainBuilding[i]
         }; 
         break;
       }
+
+      case 4:{
+        cityData[index] = {
+        course: "done",
+        type: "Factory",
+        image: MainBuilding[i]
+        }; 
+        break;
+      }      
 
       default : break;
     }
@@ -313,6 +327,17 @@ function createGrid() {
       tile.addEventListener("click", () => openHospital());
     }
 
+    if (cityData[i] && cityData[i].type === "Business") {
+      tile.addEventListener("click", () => openBusinessCenter());
+    }    
+
+    if (cityData[i] && cityData[i].type === "Factory") {
+      tile.addEventListener("click", () => openFactory());
+    } 
+
+    if (cityData[i] && cityData[i].type === "School") {
+      tile.addEventListener("click", () => openSchool());
+    }     
   tile.addEventListener("mousemove", function (e) {
     let tooltip = document.getElementById("tooltip");
 
@@ -320,10 +345,44 @@ function createGrid() {
     tooltip.style.display = "block";
 
     if (!cityData[i] || cityData[i].course === null) {
-      tooltip.innerHTML = `<h3 style="color:black"> ...                 </h3>`;
+      tooltip.innerHTML = `<h3 style="color:black; width:100px"> ...                 </h3>`;
       return;
     }
-    
+    if(cityData[i].type === "Business"){
+
+      tooltip.innerHTML = `<img id="tooltipImg" class="tooltipImage" src="${cityData[i].image}">
+                          <br><h3>Business Center</h3>
+                          <hr>
+                          <p>Here you can see each course's value</p>
+                          <p>you can exchange coins for each completed course</p>
+                          <p> You Have ${COINS} coins</p>          
+                          `;
+      return;       
+    }
+
+    if(cityData[i].type === "School"){
+      let progress = (SCHEDULE.completion_Bar/SCHEDULE.Number_Of_Courses)*100
+
+      tooltip.innerHTML = `<img id="tooltipImg" class="tooltipImage" src="${cityData[i].image}">
+                          <br><h3>School Of Courses</h3>
+                          <hr>
+                          <p>Here you can see the progress of each course</p> 
+                          <p> your current progress is ${progress}%</p>          
+                          `;
+      return;       
+    }
+
+
+    if(cityData[i].type === "Factory"){
+
+      tooltip.innerHTML = `<img id="tooltipImg" class="tooltipImage" src="${cityData[i].image}">
+                          <br><h3>Course Factory</h3>
+                          <hr>
+                          <p>Here You Can Add/Edit courses and chapters</p>
+                          <p></p>                               
+                          `;
+      return;       
+    }    
     if(cityData[i].type === "Bank"){
       let nb_MissedChap=0;
       let nb_CompletedChap=0;
@@ -365,7 +424,7 @@ function createGrid() {
 
 
     if(cityData[i].type === "Accessories"){
-      tooltip.innerHTML = `<h3 style="color:black"> ...                 </h3>`;
+      tooltip.innerHTML = `<h3 style="color:black ; width:100px"> ...                 </h3>`;
       return;      
     }    
     let chapter = CHAPTERS
@@ -525,16 +584,20 @@ function openPopup() {
 }
 
 function closePopup() {
-
-    document.getElementById("popup").style.display = "none";
+  let container = document.querySelector("#chaptersContainer");
+  container.innerHTML = "";
+  container.style.height="auto"
+  
+  document.getElementById("popup").style.display = "none";
 }
 
 function openHospital() {
 
   let container = document.querySelector("#chaptersContainer");
   container.innerHTML = "";
-
+  container.style.height="auto"
   const missed = CHAPTERS.filter(chap => chap.State === "Chapter Missed");
+  let counter=0;
 
   if (missed.length === 0) {
     container.innerHTML = `<p style="text-align:center;">✅ No missed chapters</p>`;
@@ -561,7 +624,7 @@ function openHospital() {
 
     btn.addEventListener("click", () => {
       let currentDate = new Date();
-      currentDate.setHours(0,0,0,0);
+      
 
       chap.date = currentDate.toISOString().split("T")[0];
       chap.State = "Rescheduled";
@@ -586,6 +649,8 @@ function openHospital() {
     card.appendChild(title);
     card.appendChild(status);
     card.appendChild(btn);
+    counter++
+    if(counter >= 4) container.style.height="70vh"
 
     container.appendChild(card);
   });
@@ -593,6 +658,163 @@ function openHospital() {
   openPopup();
 }
 
+
+function openBusinessCenter() {
+  let container = document.querySelector("#chaptersContainer");
+  container.innerHTML = "";
+  container.style.height="auto"
+  let counter = 0;
+
+  COURSES.forEach(course => {
+    let value = LIRA * course.Number_Of_Chapters;
+
+    const card = document.createElement("div");
+    card.classList.add("courseCard");
+
+    card.innerHTML = `
+      <div class="courseInner">
+
+        <div class="courseFront">
+          <h3>${course.name}</h3>
+          <p>${course.Number_Of_Chapters} Chapters</p>
+        </div>
+
+        <div class="courseBack">
+          <h2>${value} Coins</h2>
+          <p>Course Value</p>
+        </div>
+
+      </div>
+    `;
+
+    /* 🔥 CLICK FLIP */
+    card.addEventListener("click", () => {
+      card.classList.toggle("flipped");
+    });
+    counter++;
+    if(counter>=4) container.style.height="70vh";
+    container.appendChild(card);
+  });
+
+  openPopup();
+}
+
+function openFactory(){
+  let container = document.querySelector("#chaptersContainer");
+  container.innerHTML = "";
+  container.style.height="auto";
+
+  const card = document.createElement("div")
+  card.classList.add("chapter-card")
+
+  let p =document.createElement("p")
+  p.style.color="red"
+  p.innerText="Chosse what option you want"
+
+  let div =document.createElement("div")
+  div.style.display="flex"
+  div.style.justifyContent="space-between"
+
+  let Add = document.createElement('Button')
+  Add.classList.add("Go_Back")
+  Add.innerText="ADD"
+  Add.addEventListener("click",displayForAdd())
+
+  let Edit = document.createElement('Button')
+  Edit.classList.add("Go_Back")
+  Edit.innerText="EDIT"
+  Edit.addEventListener("click",displayForEdit());
+
+  div.appendChild(Add)
+  div.appendChild(Edit)
+
+  card.appendChild(p)
+  card.appendChild(div)
+
+
+
+  container.appendChild(card)
+
+
+  openPopup()
+}
+
+function displayForEdit(){
+  let container = document.querySelector("#chaptersContainer");
+  container.innerHTML = "";
+  container.style.height="auto";
+
+  COURSES.forEach(course =>{
+    let card =  document.createElement("div")
+    card.classList.add("chapter-card")
+    let EditButton = document.createElement("button")
+    EditButton.classList.add("Go_Back");
+    EditButton.addEventListener("click",function(){
+      container.innerHTML=""
+      CHAPTERS.forEach(chapter =>{
+        let Cha =document.createElement("div")
+        Cha.classList.add("chapter-card")
+
+      })
+    })
+  })
+
+
+}
+
+function loadChaptersForEdit(){
+  // let container = document.querySelector("#chaptersContainer");
+  // container.innerHTML = "";
+  // container.style.height="auto";
+  // CHAPTERS.forEach(chapter =>{
+  //   let Cha =document.createElement("div")
+  //   Cha.classList.add("chapter-card")
+
+  // })
+}
+
+function displayForAdd(){
+
+
+
+
+}
+
+
+function openSchool(){
+
+  let container = document.querySelector("#chaptersContainer");
+  container.innerHTML = "";
+  container.style.height="auto";
+
+  let counter = 0;
+
+  COURSES.forEach(course =>{
+    let card =document.createElement("div")
+    card.classList.add("chapter-card")
+    let completion_Bar=(course.Number_Of_Completed_Chapters/course.Number_Of_Chapters)*100;
+    card.innerHTML=`
+                    <h3 style="color:#ff5a5f; margin:1%;">${course.name}</h3>
+                    <p style="color:white">
+                      Number of Chapter : ${course.Number_Of_Chapters}
+                      <br>
+                      Number of  Completed Chapter : ${course.Number_Of_Completed_Chapters}
+                    </p>
+                    <div class="Course_Completion_Bar">
+                      <div class="progress" style="width: ${completion_Bar}%;"></div>
+                    </div>
+                  ` 
+
+    counter++
+    if(counter >=4)container.style.height="70vh";
+    container.appendChild(card)
+                   
+  })
+
+  openPopup()
+
+
+}
 
 function saveChanges(){
 
@@ -625,4 +847,14 @@ function saveChanges(){
   console.log(COURSES)
   console.log(CHAPTERS)
   console.log(ASSIGNED_CHAPTERS)
+}
+
+function updateCoin(){
+  let bit=0;
+  for(let course of COURSES){
+    if(course.State === "Completed"){
+      bit += LIRA * course.Number_Of_Chapters
+    }
+  }
+  return bit;
 }
