@@ -1,0 +1,8 @@
+v1.4.4:
+    error of creating two schedules with the same name resolved.
+    when entering the city the data will autoupdata the data. 
+    road color now fixed.
+    fixed LIRA , now it changes for each completed schedule.
+    separate the active schedules and completed schedules, you can hide the completed one .
+    
+    

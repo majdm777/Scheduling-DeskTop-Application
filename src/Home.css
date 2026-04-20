@@ -57,6 +57,13 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px;
 }
+.Completed_Schedules{
+  padding: 30px;
+  display: none;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+
+}
 
 /* CARD */
 .schedule-card {
@@ -88,9 +95,26 @@ body {
 }
 .deleteButton:hover{
     background-color: white;
-    color: red;
+    color: #ff5a5f;
     
 }
+.hide-completed-schedules{
+  margin: 10px;
+  padding: 5px;
+  border: none;
+  border-radius: 10px;
+  background:white;
+  color: #ff5a5f;
+  cursor: pointer;
+  transition: 0.3s;
+  border-color: #ff5a5f;
+  
+}
+.hide-completed-schedules:hover{
+  background-color: #ff5a5f;
+  color: white;
+}
+
 
 #SCH_NAME {
   font-size: 22px;

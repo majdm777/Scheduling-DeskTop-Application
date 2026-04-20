@@ -9,9 +9,9 @@
 <body>
     <div class="Navigation_bar">
         <a href="Create_Schedule.html"><button class="Create_Schedule">Create Schedule</button></a>
-        <button class="View_Schedules">View Schedules</button>
+        <button class="View_Schedules " id="LIRA">LIRA : 1</button>
         <button class="Setting">Setting</button>
-        <button class="Exit">Exit</button>
+        <button class="Exit" id="exit">Exit</button>
     </div>
 
     <!-- shows all the active schdules according to the date -->
@@ -41,6 +41,13 @@
 
 
     </div>
+    <button class="hide-completed-schedules" id="hide-completed-schedules" onclick="showHideCompletedSchedules()" >S</button>
+    <hr>
+    
+    <div class="Completed_Schedules" id="Completed_Schedules">
+
+    </div>
+    </body>
     <script src="Home.js"></script>
 </body>
 </html>

@@ -10,11 +10,16 @@ let HouseLargeExtra=["building_icons/Base_extra.png","building_icons/Building_Le
 let MainBuilding=["building_icons/MainBuilding_Bank.png","building_icons/MainBuilding_Hospital.png","building_icons/MainBuilding_Business.png","building_icons/MainBuilding_School.png","building_icons/MainBuilding_Factoy.png","building_icons/MainBuilding_Restaurant.png","building_icons/MainBuilding_TownHall.png"]
 let Accessories=["building_icons/Acc_tree.png","building_icons/Acc_people-1.png","building_icons/Acc_car-1.png","building_icons/Acc_car-2.png","building_icons/Acc_car-3.png"]
 
+let LIRA = 1;
 
 
 function getScheduleName(){
     const temp = new URLSearchParams(window.location.search);
-    return temp.get("name")
+    let name = temp.get("name")
+    LIRA = temp.get("lira")
+    console.log(LIRA,name)
+    
+    return name;
 }
 const SCHEDULE_NAME=getScheduleName();
 let COURSES=[]
@@ -26,7 +31,7 @@ let NUMBER_OF_DAYS;
 let COINS=0;
 
 
-let LIRA = 1.2;
+
 
 let IfElse_Counter=0;
 
@@ -70,7 +75,11 @@ loadInfo().then(result => {
     if (!result) {
         document.querySelector(".Msge").innerHTML = "failed";
     }
+
+    if(!updateData()){alert("failed to update data!")}
     IfElse_Counter++
+    IfElse_Counter++
+
     generateHouse_ForEachCourse();
     grid.style.setProperty("--cols", size);
     createGrid();
@@ -355,7 +364,7 @@ function createGrid() {
                           <hr>
                           <p>Here you can see each course's value</p>
                           <p>you can exchange coins for each completed course</p>
-                          <p> You Have ${COINS} coins</p>          
+                          <p> You Have ${COINS.toFixed(2)} coins</p>          
                           `;
       return;       
     }
@@ -740,44 +749,12 @@ function openFactory(){
 }
 
 function displayForEdit(){
-  let container = document.querySelector("#chaptersContainer");
-  container.innerHTML = "";
-  container.style.height="auto";
-
-  COURSES.forEach(course =>{
-    let card =  document.createElement("div")
-    card.classList.add("chapter-card")
-    let EditButton = document.createElement("button")
-    EditButton.classList.add("Go_Back");
-    EditButton.addEventListener("click",function(){
-      container.innerHTML=""
-      CHAPTERS.forEach(chapter =>{
-        let Cha =document.createElement("div")
-        Cha.classList.add("chapter-card")
-
-      })
-    })
-  })
-
-
 }
 
 function loadChaptersForEdit(){
-  // let container = document.querySelector("#chaptersContainer");
-  // container.innerHTML = "";
-  // container.style.height="auto";
-  // CHAPTERS.forEach(chapter =>{
-  //   let Cha =document.createElement("div")
-  //   Cha.classList.add("chapter-card")
-
-  // })
 }
 
 function displayForAdd(){
-
-
-
-
 }
 
 
@@ -788,6 +765,31 @@ function openSchool(){
   container.style.height="auto";
 
   let counter = 0;
+  let MostCourse= null;
+  let difference=1000;
+  for(let course of COURSES){
+    let temp=course.Number_Of_Completed_Chapters-course.Number_Of_Chapters;
+    if(temp<difference){
+      difference =temp;
+      MostCourse=course;
+    }
+  }
+  let card =document.createElement("div")
+  card.classList.add("chapter-card")
+  card.innerHTML=`
+                  <h3 style="color:#ff5a5f; margin:1%;">recommended course to start with <br> ${MostCourse.name}</h3>
+                  <p style="color:white">
+                    Number of Chapter : ${MostCourse.Number_Of_Chapters}
+                    <br>
+                    Number of  Completed Chapter : ${MostCourse.Number_Of_Completed_Chapters}
+                  </p>                  
+                `
+
+  let hr = document.createElement('hr')
+  hr.style.height="0.5vh"
+  hr.style.backgroundColor="black"
+  container.appendChild(card);  
+  container.appendChild(hr)
 
   COURSES.forEach(course =>{
     let card =document.createElement("div")
@@ -807,7 +809,9 @@ function openSchool(){
 
     counter++
     if(counter >=4)container.style.height="70vh";
+
     container.appendChild(card)
+    
                    
   })
 
@@ -857,4 +861,23 @@ function updateCoin(){
     }
   }
   return bit;
+}
+
+
+function updateData(){
+    let currentDate = new Date()
+    currentDate.setHours(0,0,0,0);
+
+    for(let chapter of CHAPTERS){
+        let ch_date=new Date(chapter.date);
+        ch_date.setHours(0,0,0,0);
+        if(chapter.State==="Chapter Missed" || currentDate > ch_date){
+            if(chapter.State !== "Completed"){
+                chapter.State = "Chapter Missed";
+            }
+        }
+
+    }
+    saveChanges()
+    return true
 }

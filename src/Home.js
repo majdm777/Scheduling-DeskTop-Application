@@ -1,5 +1,5 @@
 let MESSAGE = document.getElementsByClassName("message");
-
+let LIRA=1;
 
 async function loadSchedules() {
     if (!window.api?.getSchedules) {
@@ -9,19 +9,28 @@ async function loadSchedules() {
 
     let schedules = await window.api.getSchedules();
     console.log(schedules);
+
+    for(let sch of schedules){
+        if(sch.State==="Completed"){
+            LIRA=LIRA*1.05;
+        }
+    }
+    document.getElementById("LIRA").innerHTML="LIRA : "+LIRA.toFixed(4);
+    document.getElementById("exit").addEventListener("click", () => {window.api.closeApp()});
     displaySchedule(schedules)
 }
 
 
 function displaySchedule(schedules){
     let Container = document.querySelector(".Current_Active_Schedules");
+    let CompletedContainer =document.querySelector(".Completed_Schedules")
     Container.innerHTML = '';
 
     for (let element of schedules) {
 
         let completion_Bar = element.Number_Of_Courses > 0
-            ? (element.completion_Bar / element.Number_Of_Courses) * 100
-            : 0;
+        ? (element.completion_Bar / element.Number_Of_Courses) * 100
+        : 0;
 
         let start = new Date(element.start_date);
         let now = new Date();
@@ -84,18 +93,24 @@ function displaySchedule(schedules){
 
         City.addEventListener("click", function(e){
             e.stopPropagation(); // 🔥
-            window.location.href = `City.html?name=${encodeURIComponent(element.name)}`
+            window.location.href = `City.html?name=${encodeURIComponent(element.name)}&lira=${encodeURIComponent(LIRA)}`
         });
 
         let rowButton=document.createElement("div")
         rowButton.classList.add("rowButton")
+        
         rowButton.appendChild(deleteButton)
         rowButton.appendChild(City)
 
         newSchedule.appendChild(rowButton);
         
 
-        Container.appendChild(newSchedule);
+        if(element.State ==="Completed"){
+            CompletedContainer.appendChild(newSchedule)
+        }else{
+            Container.appendChild(newSchedule);
+        }
+    
 
 
     }
@@ -104,6 +119,21 @@ function displaySchedule(schedules){
     }
 }
 
+function showHideCompletedSchedules(){
+    let button = document.querySelector("#hide-completed-schedules")
+    let container = document.querySelector("#Completed_Schedules")
+
+    if(button.innerHTML ==="H"){
+        button.innerHTML ="S"
+        
+        
+        container.style.display="none" 
+    }else{
+        button.innerHTML ="H"
+        container.style.display="grid" 
+    }
+
+}
 
 
 window.onload = loadSchedules();

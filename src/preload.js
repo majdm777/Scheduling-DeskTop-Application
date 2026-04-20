@@ -6,6 +6,8 @@ const { contextBridge, ipcRenderer, ipcMain } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
 
+    closeApp: () => ipcRenderer.invoke("close-app"),
+
     saveSchedule: (data) => ipcRenderer.send('save-schedule', data),
     onScheduleSaved: (cb) => ipcRenderer.on('schedule-saved', cb),
 
@@ -20,5 +22,6 @@ contextBridge.exposeInMainWorld('api', {
     updateCourse : (data) => ipcRenderer.send('update-courses',data),
     updateSchedule : (data) => ipcRenderer.send('update-schedule',data),  
     deleteSchedule : (data) => ipcRenderer.send('delete-schedule',data),
-    UpdateAssignedChapters : (data)=> ipcRenderer.send("update-assigned-chapters",data),  
+    UpdateAssignedChapters : (data)=> ipcRenderer.send("update-assigned-chapters",data), 
+    checkScheduleName : (data) => ipcRenderer.invoke('check-schedule-name',data), 
 });

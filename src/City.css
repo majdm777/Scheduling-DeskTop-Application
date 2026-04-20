@@ -78,6 +78,7 @@ body {
 /* directions */
 .road .top {
   width: 20px;
+  background: #444;
   height: 50%;
   top: 0;
   left: 50%;
@@ -86,6 +87,7 @@ body {
 
 .road .bottom {
   width: 20px;
+  
   height: 50%;
   bottom: 0;
   left: 50%;

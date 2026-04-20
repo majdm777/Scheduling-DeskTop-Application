@@ -11,13 +11,12 @@ let CHAPTERS=[];
 
 let DEFAULT_DATE;
 
-function navigator(){
-    if (validate_input()) {
+async function navigator(){
+    if (await validate_input()) {
         Switch();
     }
 }
-
-function validate_input(){
+ async function  validate_input(){
 
     COURSES = []
     CHAPTERS=[]
@@ -29,8 +28,19 @@ function validate_input(){
 
     if (Name === "" || start_date === "" || end_date === "") {
         message.innerHTML = "Fill all the inputs";
-        return;
+        return false ;
     }
+
+    let checkSchedule= await window.api.checkScheduleName(Name)
+
+    if(checkSchedule.nama == Name){
+        message.innerHTML="Schedule with this name already exist";
+
+        return false ;
+    }
+
+
+
     SCHEDULE_NAME=Name;
     let start = new Date(start_date)
     let end = new Date(end_date)

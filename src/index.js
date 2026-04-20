@@ -60,6 +60,13 @@ const { ipcMain } = require('electron');
 const { resolve } = require('node:dns');
 const { scheduler } = require('node:timers/promises');
 
+
+
+//to close the app
+ipcMain.handle("close-app", () => {
+    app.quit();
+});
+
 ipcMain.on('save-schedule', (event, data) => {
     const { name, start, end, Bar, Num_Cor, State, Assigned_Chapters } = data;
 
@@ -258,6 +265,19 @@ ipcMain.on('delete-schedule',async (event,data) => {
     })
     console.log("schdeule deleted");
   })
+})
+
+
+//check if schedule name aready exists
+
+ipcMain.handle('check-schedule-name',async (event,data)=>{
+  const name = data;
+  return new Promise((resolve,reject)=>{
+    db.all("SELECT * FROM Schedules WHERE name = ?",[name],(err,schedule)=>{
+      if(err) reject(err);
+      else resolve(schedule);   
+    });
+  });
 })
 
 
